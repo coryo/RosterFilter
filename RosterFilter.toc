@@ -1,0 +1,26 @@
+## Interface: 11200
+## Title: RosterFilter
+## Author: Starhammer
+## Notes: 
+## Version: 1.0
+## SavedVariables: rf_scale
+
+libs\inspect.lua
+libs\module.lua
+libs\T.lua
+
+RosterFilter.lua
+util.lua
+control.lua
+color.lua
+gui\core.lua
+frame.lua
+
+slash.lua
+filter.lua
+
+
+gui\listing.lua
+
+tabs\player_listing\core.lua
+tabs\player_listing\frame.lua
