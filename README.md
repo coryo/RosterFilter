@@ -1,6 +1,8 @@
 # RosterFilter
 
-a WoW 1.12.1 guild frame. access with `/rf`.
+a WoW 1.12.1 guild frame. based on aux.
+
+access with `/rf`.
 
 `/rf scale 0.8` change the window scale
 
