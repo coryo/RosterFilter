@@ -15,6 +15,8 @@ rank/<rank name>+
 rank/<rank name>-
 zone/<zone name>
 raid
+online
+offline/<days>
 ```
 filters are combined with `/`
 
