@@ -3,20 +3,38 @@ module 'rosterfilter.tabs.player_listing'
 local gui = require 'rosterfilter.gui'
 local listing = require 'rosterfilter.gui.listing'
 
+local padding = 5
 
-frame = CreateFrame('Frame', nil, RosterFilterFrame)
+frame = CreateFrame('Frame', nil, RosterFilterFrame.content)
 frame:SetAllPoints()
 frame:SetScript('OnUpdate', on_update)
 frame:Hide()
+frame:SetResizable(true)
 frame:SetScript('OnHide', on_hide)
 
+frame.header = CreateFrame('Frame', nil, frame)
+frame.header:SetHeight(25)
+frame.header:SetPoint('TOP', frame, 'TOP', 0, -padding)
+frame.header:SetPoint('LEFT', frame, 'LEFT', padding, 0)
+frame.header:SetPoint('RIGHT', frame, 'RIGHT', -padding, 0)
+
+frame.footer = CreateFrame('Frame', nil, frame)
+frame.footer:SetHeight(25)
+frame.footer:SetPoint('BOTTOM', frame, 'BOTTOM', 0, padding)
+frame.footer:SetPoint('LEFT', frame, 'LEFT', padding, 0)
+frame.footer:SetPoint('RIGHT', frame, 'RIGHT', -padding, 0)
+
 frame.content = CreateFrame('Frame', nil, frame)
-frame.content:SetWidth(750)
-frame.content:SetPoint('TOP', frame, 'TOP', 0, -8)
-frame.content:SetPoint('BOTTOMLEFT', RosterFilterFrame.content, 'BOTTOMLEFT', 0, 0)
-frame.content:SetPoint('BOTTOMRIGHT', RosterFilterFrame.content, 'BOTTOMRIGHT', 0, 0)
+frame.content:SetWidth(frame:GetWidth() - 2*padding)
+frame.content:SetPoint('TOP', frame.header, 'BOTTOM', 0, -padding)
+frame.content:SetPoint('BOTTOMLEFT', frame.footer, 'TOPLEFT', 0, padding)
+frame.content:SetPoint('BOTTOMRIGHT', frame.footer, 'TOPRIGHT', 0, padding)
 
+frame.content:SetScript('OnSizeChanged', function(width, height)
+    refresh = true
+end)
 
+-- HEADER ---------------------------------------------------------------------
 do
     local function execute()
         query = this:GetText()
@@ -25,71 +43,122 @@ do
     end
 
     do
-        local editbox = gui.editbox(frame.content)
-        editbox:SetPoint('TOPLEFT', 5, 0)
+        local editbox = gui.editbox(frame.header)
+        editbox:SetPoint('TOPLEFT', 0, 0)
         editbox:SetWidth(300)
-        editbox:SetHeight(25)
+        editbox:SetHeight(frame.header:GetHeight())
         editbox:SetAlignment('CENTER')
+        -- default filter
         editbox:SetText('online')
-        editbox:SetScript('OnTabPressed', function()
-            if not IsShiftKeyDown() then
-                -- last_page_input:SetFocus()
-            end
+        -- focus the editbox when its shown
+        editbox:SetScript('OnShow', function()
+            editbox:SetFocus()
         end)
-        editbox.enter = function() editbox:ClearFocus() end
+
+        editbox.enter = function() execute() end
         editbox.change = execute
+
+        -- shortcut buttons
+        local button1 = gui.button(editbox)
+        button1:SetPoint('TOPLEFT', editbox, 'TOPRIGHT', 5, 0)
+        button1:SetText('Clear')
+        gui.set_size(button1, 50, 25)
+        button1:SetScript('OnClick', function()
+            editbox:SetText('');
+            editbox:SetFocus();
+            refresh=true;
+        end)
+
+        local button2 = gui.button(editbox)
+        button2:SetPoint('TOPLEFT', button1, 'TOPRIGHT', 5, 0)
+        button2:SetText('Online')
+        gui.set_size(button2, 50, 25)
+        button2:SetScript('OnClick', function()
+            editbox:SetText('online');
+            editbox:SetFocus();
+            refresh=true;
+        end)
     end
 end
 
-status_label = gui.label(frame.content, gui.font_size.large)
+name_label = gui.label(frame.header, gui.font_size.large)
+name_label:SetPoint('TOPRIGHT', frame.header, 'TOPRIGHT', 0, 0)
+
+status_label = gui.label(frame.header, gui.font_size.medium)
 status_label:SetText('0 / 0 / 0')
-status_label:SetPoint('TOPRIGHT', frame.content, 'TOPRIGHT', 0, 0)
+status_label:SetPoint('TOPRIGHT', name_label, 'TOPLEFT', -padding, 0)
 
 
+-- CONTENT --------------------------------------------------------------------
 frame.player_listing = gui.panel(frame.content)
-
-frame.player_listing:SetHeight(500 - 80)
-frame.player_listing:SetWidth(750 - 16)
-frame.player_listing:SetPoint('TOPLEFT', 0, -35)
-
+frame.player_listing:SetAllPoints()
 
 player_listing = listing.new(frame.player_listing)
-if not CanViewOfficerNote() then
-    player_listing:SetColInfo{
-        {name='Name', width=.12, align='LEFT'},
-        {name='Lvl', width=.06, align='CENTER'},
-        {name='Rank', width=.125, align='RIGHT'},
-        {name='Zone', width=.20, align='CENTER'},
-        {name='Info', width=.10, align='RIGHT'},
-        {name='Note', width=.395, align='RIGHT'},
-    }
-else
-    player_listing:SetColInfo{
-        {name='Name', width=.12, align='LEFT'},
-        {name='Lvl', width=.06, align='CENTER'},
-        {name='Rank', width=.125, align='RIGHT'},
-        {name='Zone', width=.20, align='CENTER'},
-        {name='Info', width=.10, align='RIGHT'},
-        {name='Note', width=.1975, align='RIGHT'},
-        {name='Officer Note', width=.1975, align='RIGHT'},
-    }
-end
+
+player_listing:SetColInfo{
+    {name='C', width=.02, align='LEFT'},
+    {name='Name', width=.20, align='LEFT'},
+    {name='Lvl', width=.08, align='CENTER'},
+    {name='Rank', width=.15, align='RIGHT'},
+    {name='Zone', width=.20, align='CENTER'},
+    {name='Info', width=.10, align='RIGHT'},
+    {name='Note', width=.25, align='RIGHT'},
+}
+
 
 player_listing:SetSelection(function(data)
     return;
 end)
 
+
 player_listing:SetHandler('OnClick', function(table, row_data, column, button)
     local member = row_data.record
     print(member.name, 'Level', member.level, member.class, '-', member.zone)
+
     if member.note ~= '' then
         print('Note:', member.note)
     end
+
     if CanViewOfficerNote() and member.officer_note ~= '' then
         print('ONote:', member.officer_note)
+    end
+
+    if button == 'RightButton' then
+        gui.menu(
+            'Whisper', function()
+                if (ChatFrameEditBox:IsVisible()) then
+                    ChatEdit_OnEscapePressed(ChatFrameEditBox);
+                end
+                ChatFrameEditBox:SetText('/w '..member.name);
+            end,
+            'Invite', function () InviteByName(member.name) end,
+            'Target', function () 
+                if (ChatFrameEditBox:IsVisible()) then
+                    ChatEdit_OnEscapePressed(ChatFrameEditBox);
+                end
+                ChatFrameEditBox:SetText('/tar '..member.name);
+                ChatEdit_SendText(ChatFrameEditBox);
+            end,
+            'Cancel', function () return; end
+        )
     end
 end)
 
 player_listing:SetHandler('OnDoubleClick', function(table, row_data, column, button)
     return;
 end)
+
+
+-- FOOTER ---------------------------------------------------------------------
+do
+	local btn = gui.button(frame.footer)
+	btn:SetPoint('BOTTOMRIGHT', frame.footer, 'BOTTOMRIGHT')
+	gui.set_size(btn, 60, frame.footer:GetHeight())
+	btn:SetText('Close')
+	btn:SetScript('OnClick', function() RosterFilterFrame:Hide() end)
+	close_button = btn
+end
+
+motd_label = gui.label(frame.footer, gui.font_size.small)
+motd_label:SetPoint('TOPLEFT', frame.footer, 'TOPLEFT')
+motd_label:SetText(GetGuildRosterMOTD())

@@ -22,6 +22,7 @@ do
 end
 
 local roster_update_listener;
+local motd_listener;
 
 
 function LOAD()
@@ -31,10 +32,11 @@ end
 
 function OPEN()
     frame:Show()
-    
-    -- "GUILD_MOTD"
     -- "PLAYER_GUILD_UPDATE"
+    local guildName,_,_ = GetGuildInfo('player');
+    name_label:SetText(format('<%s>', guildName))
     roster_update_listener = event_listener("GUILD_ROSTER_UPDATE", on_guild_roster_update)
+    motd_listener = event_listener("GUILD_MOTD", on_guild_motd)
     refresh = true
 end
 
@@ -60,10 +62,15 @@ end
 
 function on_hide()
     kill_listener(roster_update_listener)
+    kill_listener(motd_listener)
 end
 
 do
     function on_guild_roster_update()
         refresh = true
+    end
+
+    function on_guild_motd()
+        motd_label:SetText(GetGuildRosterMOTD())
     end
 end

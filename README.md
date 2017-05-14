@@ -6,6 +6,8 @@ access with `/rf`.
 
 `/rf scale 0.8` change the window scale
 
+resize the window with CTRL+drag
+
 ### filters
 
 ```

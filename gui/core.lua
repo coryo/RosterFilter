@@ -28,7 +28,7 @@ do
 				UIDropDownMenu_AddButton(O('text', arg[i], 'notCheckable', true, 'func', arg[i + 1]))
 			end
 		end, 'MENU')
-		ToggleDropDownMenu(1, nil, menu, 'cursor')
+		ToggleDropDownMenu(1, nil, menu, 'cursor', 0, 2*menu:GetHeight())
 	end
 end
 

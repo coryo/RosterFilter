@@ -2,6 +2,7 @@ module 'rosterfilter'
 
 local gui = require 'rosterfilter.gui'
 
+
 function LOAD()
 	for i = 1, getn(tab_info) do
 		tabs:create_tab(tab_info[i].name)
@@ -11,20 +12,22 @@ end
 do
     local frame = CreateFrame('Frame', 'RosterFilterFrame', UIParent)
     gui.set_window_style(frame)
-    gui.set_size(frame, 750, 500)
+    gui.set_size(frame, 750, 400)
     frame:SetPoint('LEFT', 750, 0)
     frame:SetToplevel(true)
 	frame:SetMovable(true)
+	frame:SetResizable(true)
 	frame:EnableMouse(true)
 	frame:SetClampedToScreen(true)
 	frame:RegisterForDrag('LeftButton')
+	frame:SetScript('OnMouseDown', function() if IsControlKeyDown() then this:StartSizing(); end end)
+	frame:SetScript('OnMouseUp', function() this:StopMovingOrSizing(); end)
 	frame:SetScript('OnDragStart', function() this:StartMoving() end)
 	frame:SetScript('OnDragStop', function() this:StopMovingOrSizing() end)
 	frame:SetScript('OnShow', function() PlaySound('AuctionWindowOpen') end)
 	frame:SetScript('OnHide', function() PlaySound('AuctionWindowClose'); end)
 	frame.content = CreateFrame('Frame', nil, frame)
-	frame.content:SetPoint('TOPLEFT', 4, -80)
-	frame.content:SetPoint('BOTTOMRIGHT', -4, 35)
+	frame.content:SetAllPoints()
 	frame:Hide()
 	M.RosterFilterFrame = frame
 end
@@ -36,10 +39,10 @@ do
 end
 
 do
-	local btn = gui.button(RosterFilterFrame)
-	btn:SetPoint('BOTTOMRIGHT', -5, 5)
-	gui.set_size(btn, 60, 24)
-	btn:SetText('Close')
-	btn:SetScript('OnClick', function() RosterFilterFrame:Hide() end)
-	close_button = btn
+	local frame = CreateFrame('Frame', nil, RosterFilterFrame)
+	gui.set_size(frame, 10, 10)
+	frame:SetPoint('BOTTOMRIGHT', RosterFilterFrame, 'BOTTOMRIGHT')
+	frame:SetScript('OnMouseDown', function() RosterFilterFrame:StartSizing(); end)
+	frame:SetScript('OnMouseUp', function() RosterFilterFrame:StopMovingOrSizing(); end)	
+
 end

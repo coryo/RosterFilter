@@ -5,8 +5,8 @@ include 'rosterfilter'
 
 local gui = require 'rosterfilter.gui'
 
-local ROW_HEIGHT = 15
-local ROW_TEXT_SIZE = 14
+local ROW_TEXT_SIZE = gui.font_size.small
+local ROW_HEIGHT = ROW_TEXT_SIZE + 1
 local HEAD_HEIGHT = 27
 local HEAD_SPACE = 2
 local DEFAULT_COL_INFO = {{width=1}}
@@ -91,7 +91,7 @@ local methods = {
 		    self.headHeight = 0
 	    end
 
-	    if getn(self.rowData or empty) > self.numRows then
+	    if getn(self.rowData or empty) > self:GetNumRows() then
 		    self.contentFrame:SetPoint('BOTTOMRIGHT', -15, 0)
 	    else
 		    self.contentFrame:SetPoint('BOTTOMRIGHT', 0, 0)
@@ -122,12 +122,12 @@ local methods = {
 		    end
 	    end
 
-	    while getn(self.rows) < self.numRows do
+	    while getn(self.rows) < self:GetNumRows() do
 		    self:AddRow()
 	    end
 
 	    for i, row in self.rows do
-		    if i > self.numRows then
+		    if i > self:GetNumRows() then
 			    row.data = nil
 			    row:Hide()
 		    else
@@ -148,11 +148,11 @@ local methods = {
 	    end
 	    
         if not self.rowData then return end
-        FauxScrollFrame_Update(self.scrollFrame, getn(self.rowData), self.numRows, ROW_HEIGHT)
+        FauxScrollFrame_Update(self.scrollFrame, getn(self.rowData), self:GetNumRows(), ROW_HEIGHT)
         local offset = FauxScrollFrame_GetOffset(self.scrollFrame)
         self.offset = offset
 
-        for i = 1, self.numRows do
+        for i = 1, self:GetNumRows() do
             self.rows[i].data = nil
             if i > getn(self.rowData) then
                 self.rows[i]:Hide()
@@ -290,6 +290,10 @@ local methods = {
         self.colInfo = colInfo
         self:Update()
     end,
+
+    GetNumRows = function(self)
+        return max(floor((self:GetParent():GetHeight()) / ROW_HEIGHT), 0)
+    end
 }
 
 function M.new(parent)
@@ -299,8 +303,7 @@ function M.new(parent)
     st.numRows = max(floor((parent:GetHeight() - HEAD_HEIGHT - HEAD_SPACE) / ROW_HEIGHT), 0)
 
     local contentFrame = CreateFrame('Frame', nil, st)
-    contentFrame:SetPoint('TOPLEFT', 0, 0)
-    contentFrame:SetPoint('BOTTOMRIGHT', 0, 0)
+    contentFrame:SetAllPoints()
     st.contentFrame = contentFrame
 
     local scrollFrame = CreateFrame('ScrollFrame', st:GetName() .. 'ScrollFrame', st, 'FauxScrollFrameTemplate')
