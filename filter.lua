@@ -203,17 +203,44 @@ function M.Query(str)
 
         local class_color = color.class[strlower(member.class)]
 
-        tinsert(rows, O(
-            'cols', A(
-                O('value', online_color('*'), 'sort', member.online),
-                O('value', class_color(member.name), 'sort', member.name),
-                O('value', member.level, 'sort', tonumber(member.level)),
-                O('value', member.rank, 'sort', member.rank_index),
-                O('value', member.zone, 'sort', member.zone),
-                O('value', member.note, 'sort', member.note)
-            ),
-            'record', member
-        ))
+        local info_text;
+        if not member.online then
+            local days = member.offline / 24
+            if days < 2 then
+                info_text = format('%d hours', member.offline)
+            else
+                info_text = format('%d days', days)
+            end
+        end
+
+        if CanViewOfficerNote() then
+            tinsert(rows, O(
+                'cols', A(
+                    O('value', online_color('*'), 'sort', member.online),
+                    O('value', class_color(member.name), 'sort', member.name),
+                    O('value', member.level, 'sort', tonumber(member.level)),
+                    O('value', member.rank, 'sort', member.rank_index),
+                    O('value', member.zone, 'sort', member.zone),
+                    O('value', info_text, 'sort', member.offline),
+                    O('value', member.note, 'sort', member.note),
+                    O('value', member.officer_note, 'sort', member.officer_note)
+                ),
+                'record', member
+            ))
+        else
+            tinsert(rows, O(
+                'cols', A(
+                    O('value', online_color('*'), 'sort', member.online),
+                    O('value', class_color(member.name), 'sort', member.name),
+                    O('value', member.level, 'sort', tonumber(member.level)),
+                    O('value', member.rank, 'sort', member.rank_index),
+                    O('value', member.zone, 'sort', member.zone),
+                    O('value', info_text, 'sort', member.offline),
+                    O('value', member.note, 'sort', member.note)
+                ),
+                'record', member
+            ))
+        end
     end
 
     return rows or nil

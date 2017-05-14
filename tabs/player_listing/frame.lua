@@ -54,21 +54,42 @@ frame.player_listing:SetPoint('TOPLEFT', 0, -35)
 
 
 player_listing = listing.new(frame.player_listing)
-player_listing:SetColInfo{
-    {name='O', width=.02, align='RIGHT'},
-    {name='Name', width=.23, align='LEFT'},
-    {name='Lvl', width=.06, align='CENTER'},
-    {name='Rank', width=.125, align='RIGHT'},
-    {name='Zone', width=.20, align='CENTER'},
-    {name='Note', width=.365, align='RIGHT'},
-} 
+if not CanViewOfficerNote() then
+    player_listing:SetColInfo{
+        {name='O', width=.02, align='RIGHT'},
+        {name='Name', width=.10, align='LEFT'},
+        {name='Lvl', width=.06, align='CENTER'},
+        {name='Rank', width=.125, align='RIGHT'},
+        {name='Zone', width=.20, align='CENTER'},
+        {name='Info', width=.10, align='RIGHT'},
+        {name='Note', width=.395, align='RIGHT'},
+    }
+else
+    player_listing:SetColInfo{
+        {name='O', width=.02, align='RIGHT'},
+        {name='Name', width=.10, align='LEFT'},
+        {name='Lvl', width=.06, align='CENTER'},
+        {name='Rank', width=.125, align='RIGHT'},
+        {name='Zone', width=.20, align='CENTER'},
+        {name='Info', width=.10, align='RIGHT'},
+        {name='Note', width=.1975, align='RIGHT'},
+        {name='Officer Note', width=.1975, align='RIGHT'},
+    }
+end
 
 player_listing:SetSelection(function(data)
     return;
 end)
 
 player_listing:SetHandler('OnClick', function(table, row_data, column, button)
-    print(row_data.record.name)
+    local member = row_data.record
+    print(member.name, 'Level', member.level, member.class, '-', member.zone)
+    if member.note ~= '' then
+        print('Note:', member.note)
+    end
+    if CanViewOfficerNote() and member.officer_note ~= '' then
+        print('ONote:', member.officer_note)
+    end
 end)
 
 player_listing:SetHandler('OnDoubleClick', function(table, row_data, column, button)
