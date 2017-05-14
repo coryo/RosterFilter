@@ -59,8 +59,10 @@ local handlers = {
 }
 
 local methods = {
+
     SetSort = function(self, column)
-        local sorted = self.isSorted
+        local invert = self.sortInvert
+
         local function sortFunc(a, b)
             local a_val = a['cols'][column]['sort']
             local b_val = b['cols'][column]['sort']
@@ -71,16 +73,15 @@ local methods = {
                 cmp_a = tostring(a_val)
                 cmp_b = tostring(b_val)
             end
-            if sorted then
+
+            if invert then
                 return cmp_a > cmp_b
             else
                 return cmp_a < cmp_b
             end
         end
         sort(self.rowData, sortFunc)
-        self.sortColumn = column
-        self.isSorted = not sorted
-        self:Update()
+        self.isSorted = true
     end,    
 
     Update = function(self)
@@ -111,7 +112,10 @@ local methods = {
 			    col.text:SetJustifyH(self.colInfo[i].headAlign or 'CENTER')
                 col:RegisterForClicks('LeftButtonUp')
                 col:SetScript('OnClick', function() 
+                    self.sortColumn = this.colNum
+                    self.sortInvert = not self.sortInvert
                     self:SetSort(this.colNum)
+                    self:Update()
                 end)
 		    else
 			    col:Hide()
@@ -185,7 +189,8 @@ local methods = {
 		    release(row)
 	    end
         self.rowData = rowData
-        self.updateSort = true
+
+        self:SetSort(self.sortColumn)
         self:Update()
     end,
 
@@ -326,6 +331,10 @@ function M.new(parent)
     st.handlers = T
     st.colInfo = DEFAULT_COL_INFO
     st.sorts = {}
+
+    st.isSorted = false
+    st.sortColumn = 1
+    st.sortInvert = false
 
     return st
 end

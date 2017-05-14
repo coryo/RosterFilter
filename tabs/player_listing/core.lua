@@ -31,6 +31,7 @@ end
 
 function OPEN()
     frame:Show()
+    
     -- "GUILD_MOTD"
     -- "PLAYER_GUILD_UPDATE"
     roster_update_listener = event_listener("GUILD_ROSTER_UPDATE", on_guild_roster_update)

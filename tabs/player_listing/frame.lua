@@ -30,15 +30,14 @@ do
         editbox:SetWidth(300)
         editbox:SetHeight(25)
         editbox:SetAlignment('CENTER')
+        editbox:SetText('online')
         editbox:SetScript('OnTabPressed', function()
             if not IsShiftKeyDown() then
                 -- last_page_input:SetFocus()
             end
         end)
-        editbox.enter = function() editbox:ClearFocus() execute() end
+        editbox.enter = function() editbox:ClearFocus() end
         editbox.change = execute
-
-
     end
 end
 

@@ -182,7 +182,8 @@ function M.Query(str)
         for _,index in pairs(working_set) do
             local member = member_cache[index]
             local qry = strlower(str)
-            if string.find(strlower(member.name), qry) ~= nil or string.find(strlower(member.note), qry) or string.find(strlower(member.officer_note), qry) then
+            local search = strlower(member.name..member.rank..member.zone..member.note..member.officer_note)
+            if string.find(search, qry) then
                 tinsert(subset, index)
             end
         end
@@ -192,21 +193,15 @@ function M.Query(str)
     local rows = T
     for _,index in pairs(working_set) do
         local member = member_cache[index]
+        
         local online_color;
         if member.online then
             online_color = color.green
         else
             online_color = color.red
         end
+
         local class_color = color.class[strlower(member.class)]
-
-
-        local zone_text;
-        if member.online then
-            zone_text = member.zone
-        else
-            zone_text = member.offline .. ' hours'
-        end
 
         tinsert(rows, O(
             'cols', A(
@@ -214,7 +209,7 @@ function M.Query(str)
                 O('value', class_color(member.name), 'sort', member.name),
                 O('value', member.level, 'sort', tonumber(member.level)),
                 O('value', member.rank, 'sort', member.rank_index),
-                O('value', zone_text, 'sort', member.zone),
+                O('value', member.zone, 'sort', member.zone),
                 O('value', member.note, 'sort', member.note)
             ),
             'record', member
