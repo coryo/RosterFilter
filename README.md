@@ -17,6 +17,10 @@ zone/<zone name>
 raid
 online
 offline/<days>
+lvl/<level>
+lvl/<min>-<max>
+role/<heal/tank/dps/melee/ranged/caster>
+
 ```
 filters are combined with `/`
 

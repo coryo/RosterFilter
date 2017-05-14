@@ -5,6 +5,8 @@ include 'rosterfilter'
 
 local member_cache = {}
 local rank_cache = {}
+local total_count = 0
+local online_count = 0
 
 
 function M.index_to_rank(index)
@@ -55,21 +57,13 @@ M.filters = {
             end
         end
     },
-    ['offline'] = {
-        input_type = '',
-        validator = function()
-            return function(member)
-                return not member.online
-            end
-        end
-    },
     ['raid'] = {
         input_type = '',
         validator = function()
             return function(member)
                 if GetNumRaidMembers() == 0 then return false; end;
                 for i = 1, 40 do
-                    name,_,_,_,_,_,_,_,_,_,_ = GetRaidRosterInfo(i)
+                    local name,_,_,_,_,_,_,_,_,_,_ = GetRaidRosterInfo(i)
                     if name and strlower(name) == strlower(member.name) then return true; end;
                 end
                 return false;
@@ -91,7 +85,48 @@ M.filters = {
                 return member.offline and (member.offline / 24) >= (tonumber(days) or 0)
             end
         end
-    }    
+    },
+    ['role'] = {
+        input_type = 'string',
+        validator = function(role)
+            return function(member)
+                local cls = strlower(member.class);
+                local role = strlower(role);
+                if role == 'heal' or role == 'healer' then
+                    return cls == 'priest' or cls == 'paladin' or cls == 'druid' or cls == 'shaman';
+                elseif role == 'dps' then
+                    return cls == 'rogue' or cls == 'warrior' or cls == 'mage' or cls == 'warlock' or cls=='hunter';
+                elseif role == 'caster' then
+                    return cls == 'mage' or cls == 'warlock' or cls == 'shaman' or cls == 'druid';
+                elseif role == 'tank' then
+                    return cls == 'warrior' or cls == 'druid' or cls == 'paladin';
+                elseif role == 'melee' then
+                    return cls == 'warrior' or cls == 'rogue' or cls == 'paladin' or cls == 'druid';
+                elseif role == 'ranged' then
+                    return cls =='mage' or cls == 'hunter' or cls=='warlock';
+                end
+                return false
+            end
+        end
+    },
+    ['lvl'] = {
+        input_type == 'string',
+        validator = function(str)
+            return function(member)
+                local min = 1;
+                local max = 60;
+
+                local parts = str and map(split(str, '-'), function(part) return trim(part) end) or T
+
+                if parts[1] ~= '' and parts[1] ~= nil then
+                    min = tonumber(parts[1]) or 1
+                    max = tonumber(parts[2]) or min
+                end
+                
+                return (member.level >= min) and (member.level <= max);
+            end
+        end
+    }
 }
 
 
@@ -193,6 +228,8 @@ end
 function M.UpdateRoster()
     member_cache = {}
     rank_cache = {}
+    total_count = 0
+    online_count = 0
 
     local guild_members = GetNumGuildMembers(true);
     
@@ -216,12 +253,21 @@ function M.UpdateRoster()
                 local years, months, days, hours = GetGuildRosterLastOnline(i);
                 local toff = (((years*12)+months)*30.5+days)*24+hours;
                 member.offline = toff
+            else
+                online_count = online_count + 1
             end
             tinsert(member_cache, member)
+
+            total_count = total_count + 1
         end
     end
 
     for i = 1, GuildControlGetNumRanks() do
         rank_cache[i - 1] = GuildControlGetRankName(i);
     end
+end
+
+
+function M.PlayerCount()
+    return online_count, total_count
 end
