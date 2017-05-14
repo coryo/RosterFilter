@@ -22,6 +22,16 @@ end
 
 
 M.filters = {
+    ['default-filter'] = {
+        input_type = '',
+        validator = function(str)
+            return function(member)
+                local qry = strlower(str)
+                local search = strlower(member.name..member.level..member.rank..member.zone..member.note..member.officer_note)
+                return string.find(search, qry)
+            end
+        end
+    },
     ['class'] = {
         input_type = 'string',
         validator = function(class_name)
@@ -92,6 +102,7 @@ M.filters = {
             return function(member)
                 local cls = strlower(member.class);
                 local role = strlower(role);
+                -- localization
                 if role == 'heal' or role == 'healer' then
                     return cls == 'priest' or cls == 'paladin' or cls == 'druid' or cls == 'shaman';
                 elseif role == 'dps' then
@@ -145,6 +156,8 @@ function M.parse_filter_string(str)
             else
                 tinsert(used_filters, {filter=parts[i], args=''})
             end
+        else
+            tinsert(used_filters, {filter='default-filter', args=parts[i]})
         end
         i = i + 1
     end
@@ -167,6 +180,7 @@ function M.Query(str)
         if filters[filter.filter] then
             local validator = filters[filter.filter].validator(filter.args)
             local subset = {}
+
             for _,index in pairs(working_set) do
                 local member = member_cache[index]
                 if validator(member) then
@@ -177,35 +191,18 @@ function M.Query(str)
         end
     end
 
-    if table.getn(used_filters) == 0 and string.len(str) > 0 then
-        local subset = {}
-        for _,index in pairs(working_set) do
-            local member = member_cache[index]
-            local qry = strlower(str)
-            local search = strlower(member.name..member.rank..member.zone..member.note..member.officer_note)
-            if string.find(search, qry) then
-                tinsert(subset, index)
-            end
-        end
-        working_set = subset
-    end
-
     local rows = T
     for _,index in pairs(working_set) do
         local member = member_cache[index]
         
-        local online_color;
-        if member.online then
-            online_color = color.green
-        else
-            online_color = color.red
-        end
-
         local class_color = color.class[strlower(member.class)]
 
         local info_text;
+        local alpha = 1.0;
         if not member.online then
-            local days = member.offline / 24
+            alpha = 0.4;
+
+            local days = member.offline / 24;
             if days < 2 then
                 info_text = format('%d hours', member.offline)
             else
@@ -216,7 +213,6 @@ function M.Query(str)
         if CanViewOfficerNote() then
             tinsert(rows, O(
                 'cols', A(
-                    O('value', online_color('*'), 'sort', member.online),
                     O('value', class_color(member.name), 'sort', member.name),
                     O('value', member.level, 'sort', tonumber(member.level)),
                     O('value', member.rank, 'sort', member.rank_index),
@@ -225,12 +221,12 @@ function M.Query(str)
                     O('value', member.note, 'sort', member.note),
                     O('value', member.officer_note, 'sort', member.officer_note)
                 ),
-                'record', member
+                'record', member,
+                'alpha', alpha
             ))
         else
             tinsert(rows, O(
                 'cols', A(
-                    O('value', online_color('*'), 'sort', member.online),
                     O('value', class_color(member.name), 'sort', member.name),
                     O('value', member.level, 'sort', tonumber(member.level)),
                     O('value', member.rank, 'sort', member.rank_index),
@@ -238,7 +234,8 @@ function M.Query(str)
                     O('value', info_text, 'sort', member.offline),
                     O('value', member.note, 'sort', member.note)
                 ),
-                'record', member
+                'record', member,
+                'alpha', alpha
             ))
         end
     end

@@ -176,6 +176,7 @@ local methods = {
                         else
                             col.text:SetText(colData.value)
                         end
+                        col.text:SetAlpha(data.alpha or 1.0)
                     end
                 end
             end

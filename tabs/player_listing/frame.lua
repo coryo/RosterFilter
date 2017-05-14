@@ -56,8 +56,7 @@ frame.player_listing:SetPoint('TOPLEFT', 0, -35)
 player_listing = listing.new(frame.player_listing)
 if not CanViewOfficerNote() then
     player_listing:SetColInfo{
-        {name='O', width=.02, align='RIGHT'},
-        {name='Name', width=.10, align='LEFT'},
+        {name='Name', width=.12, align='LEFT'},
         {name='Lvl', width=.06, align='CENTER'},
         {name='Rank', width=.125, align='RIGHT'},
         {name='Zone', width=.20, align='CENTER'},
@@ -66,8 +65,7 @@ if not CanViewOfficerNote() then
     }
 else
     player_listing:SetColInfo{
-        {name='O', width=.02, align='RIGHT'},
-        {name='Name', width=.10, align='LEFT'},
+        {name='Name', width=.12, align='LEFT'},
         {name='Lvl', width=.06, align='CENTER'},
         {name='Rank', width=.125, align='RIGHT'},
         {name='Zone', width=.20, align='CENTER'},
