@@ -1,9 +1,9 @@
-module 'rosterfilter.tabs.player_listing'
+module 'rosterfilter.tabs.guild'
 
 include 'T'
 include 'rosterfilter'
 
-local filters = require 'rosterfilter.filter'
+-- local filters = require 'rosterfilter.filter'
 
 
 TAB 'Guild'
@@ -21,22 +21,28 @@ do
     function set_query(v) q = v end
 end
 
-local roster_update_listener;
-local motd_listener;
+local roster_update_listener, player_guild_update_listener, motd_listener;
 
 
 function LOAD()
-
+    
 end
 
 
 function OPEN()
-    frame:Show()
-    -- "PLAYER_GUILD_UPDATE"
     local guildName,_,_ = GetGuildInfo('player');
     name_label:SetText(format('<%s>', guildName))
-    roster_update_listener = event_listener("GUILD_ROSTER_UPDATE", on_guild_roster_update)
-    motd_listener = event_listener("GUILD_MOTD", on_guild_motd)
+    roster_update_listener = event_listener("GUILD_ROSTER_UPDATE", function() refresh = true; end)
+    player_guild_update_listener = event_listener("PLAYER_GUILD_UPDATE", function() refresh = true; end)
+    motd_listener = event_listener("GUILD_MOTD", function(self, message) motd_label:SetText(message); end)
+
+    if not CanEditMOTD() then
+        motd_edit_button:Disable()
+    end
+
+    motd_label:SetText(GetGuildRosterMOTD())
+
+    frame:Show()
     refresh = true
 end
 
@@ -45,10 +51,11 @@ function CLOSE()
     frame:Hide()   
 end
 
+
 function update_listing()
-    local data = filters.Query(query)
+    local data = Query(query)
     player_listing:SetData(data)
-    local online, total = filters.PlayerCount();
+    local online, total = PlayerCount();
     status_label:SetText(format('%d / %d / %d', table.getn(data), online, total))
 end
 
@@ -60,17 +67,9 @@ function on_update()
     end
 end
 
+
 function on_hide()
     kill_listener(roster_update_listener)
+    kill_listener(player_guild_update_listener)
     kill_listener(motd_listener)
-end
-
-do
-    function on_guild_roster_update()
-        refresh = true
-    end
-
-    function on_guild_motd()
-        motd_label:SetText(GetGuildRosterMOTD())
-    end
 end

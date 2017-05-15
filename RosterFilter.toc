@@ -15,12 +15,10 @@ control.lua
 color.lua
 gui\core.lua
 frame.lua
-
-slash.lua
-filter.lua
-
+core\slash.lua
 
 gui\listing.lua
 
-tabs\player_listing\core.lua
-tabs\player_listing\frame.lua
+tabs\guild\core.lua
+tabs\guild\filter.lua
+tabs\guild\frame.lua

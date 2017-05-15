@@ -17,7 +17,7 @@ function EVENT()
 		if listener.killed then
 			listeners[id] = nil
 		elseif event == listener.event then
-			listener.cb(listener.kill)
+			listener.cb(self, arg1, arg2, arg3, arg4, arg5, arg6, arg7)
 		end
 	end
 end

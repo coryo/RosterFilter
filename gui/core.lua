@@ -25,7 +25,9 @@ do
 		HideDropDownMenu(1)
 		UIDropDownMenu_Initialize(menu, function()
 			for i = 1, getn(arg), 2 do
-				UIDropDownMenu_AddButton(O('text', arg[i], 'notCheckable', true, 'func', arg[i + 1]))
+				if arg[i] ~= nil and arg[i + 1] ~= nil then
+					UIDropDownMenu_AddButton(O('text', arg[i], 'notCheckable', true, 'func', arg[i + 1]))
+				end
 			end
 		end, 'MENU')
 		ToggleDropDownMenu(1, nil, menu, 'cursor', 0, 2*menu:GetHeight())
@@ -79,6 +81,44 @@ function M.checkbutton(parent, text_height)
     end
     return button
 end
+
+-- function M.dialog(parent, title, placeholder, callback)
+-- 	local dialog = CreateFrame('Frame', nil, parent)
+-- 	dialog:SetWidth(300)
+-- 	dialog:SetHeight(100)
+
+--     local function execute()
+--         str = this:GetText()
+-- 		callback(str)
+--     end
+
+-- 	local editbox = gui.editbox(dialog)
+-- 	editbox:SetPoint('TOPLEFT', 0, 0)
+-- 	editbox:SetWidth(300)
+-- 	editbox:SetHeight(frame.header:GetHeight())
+-- 	editbox:SetAlignment('LEFT')
+-- 	editbox:SetText(placeholder or '')
+-- 	editbox:SetScript('OnShow', function() editbox:SetFocus() end)
+-- 	editbox.enter = execute
+
+-- 	local button1 = gui.button(dialog)
+-- 	button1:SetPoint('TOPLEFT', editbox, 'TOPRIGHT', 5, 0)
+-- 	button1:SetText('Accept')
+-- 	gui.set_size(button1, 50, 25)
+-- 	button1:SetScript('OnClick', function()
+-- 		execute()
+-- 	end)
+
+-- 	local button2 = gui.button(dialog)
+-- 	button2:SetPoint('TOPLEFT', button1, 'TOPRIGHT', 5, 0)
+-- 	button2:SetText('Cancel')
+-- 	gui.set_size(button2, 50, 25)
+-- 	button2:SetScript('OnClick', function()
+-- 		dialog:Hide()
+-- 	end)
+
+-- 	return dialog
+-- end
 
 function M.button(parent, text_height)
     text_height = text_height or font_size.large

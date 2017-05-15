@@ -1,4 +1,4 @@
-module 'rosterfilter.tabs.player_listing'
+module 'rosterfilter.tabs.guild'
 
 local gui = require 'rosterfilter.gui'
 local listing = require 'rosterfilter.gui.listing'
@@ -123,6 +123,26 @@ player_listing:SetHandler('OnClick', function(table, row_data, column, button)
         print('ONote:', member.officer_note)
     end
 
+    local edit_note = nil
+    local edit_note_func = nil;
+    if CanEditPublicNote() then
+        edit_note = 'Edit Note';
+        edit_note_func = function()
+            SetGuildRosterSelection(member.index)
+            StaticPopup_Show("SET_GUILDPLAYERNOTE")
+        end
+    end
+
+    local edit_onote = nil
+    local edit_onote_func = nil;
+    if CanEditOfficerNote() then
+        edit_onote = 'Edit Officer Note';
+        edit_onote_func = function()
+            SetGuildRosterSelection(member.index)
+            StaticPopup_Show("SET_GUILDOFFICERNOTE")
+        end
+    end    
+
     if button == 'RightButton' then
         gui.menu(
             'Whisper', function()
@@ -139,10 +159,13 @@ player_listing:SetHandler('OnClick', function(table, row_data, column, button)
                 ChatFrameEditBox:SetText('/tar '..member.name);
                 ChatEdit_SendText(ChatFrameEditBox);
             end,
+            edit_note, edit_note_func,
+            edit_onote, edit_onote_func,       
             'Cancel', function () return; end
         )
     end
 end)
+
 
 player_listing:SetHandler('OnDoubleClick', function(table, row_data, column, button)
     return;
@@ -150,15 +173,21 @@ end)
 
 
 -- FOOTER ---------------------------------------------------------------------
-do
-	local btn = gui.button(frame.footer)
-	btn:SetPoint('BOTTOMRIGHT', frame.footer, 'BOTTOMRIGHT')
-	gui.set_size(btn, 60, frame.footer:GetHeight())
-	btn:SetText('Close')
-	btn:SetScript('OnClick', function() RosterFilterFrame:Hide() end)
-	close_button = btn
-end
+local btn = gui.button(frame.footer)
+btn:SetPoint('BOTTOMRIGHT', frame.footer, 'BOTTOMRIGHT')
+gui.set_size(btn, 60, frame.footer:GetHeight())
+btn:SetText('Close')
+btn:SetScript('OnClick', function() RosterFilterFrame:Hide() end)
+close_button = btn
+
+motd_edit_button = gui.button(frame.footer)
+motd_edit_button:SetPoint('TOPRIGHT', close_button, 'TOPLEFT', -padding, 0)
+gui.set_size(motd_edit_button, 60, frame.footer:GetHeight())
+motd_edit_button:SetText('MOTD')
+motd_edit_button:SetScript('OnClick', function() StaticPopup_Show("SET_GUILDMOTD") end)
 
 motd_label = gui.label(frame.footer, gui.font_size.small)
 motd_label:SetPoint('TOPLEFT', frame.footer, 'TOPLEFT')
-motd_label:SetText(GetGuildRosterMOTD())
+motd_label:SetPoint('RIGHT', motd_edit_button, 'LEFT', -padding, 0)
+motd_label:SetJustifyH('LEFT')
+motd_label:SetJustifyV('CENTER')

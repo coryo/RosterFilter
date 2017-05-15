@@ -24,8 +24,8 @@ do
 	frame:SetScript('OnMouseUp', function() this:StopMovingOrSizing(); end)
 	frame:SetScript('OnDragStart', function() this:StartMoving() end)
 	frame:SetScript('OnDragStop', function() this:StopMovingOrSizing() end)
-	frame:SetScript('OnShow', function() PlaySound('AuctionWindowOpen') end)
-	frame:SetScript('OnHide', function() PlaySound('AuctionWindowClose'); end)
+	frame:SetScript('OnShow', function() PlaySound('igMainMenuOpen') end)
+	frame:SetScript('OnHide', function() PlaySound('igMainMenuClose'); end)
 	frame.content = CreateFrame('Frame', nil, frame)
 	frame.content:SetAllPoints()
 	frame:Hide()
@@ -43,6 +43,5 @@ do
 	gui.set_size(frame, 10, 10)
 	frame:SetPoint('BOTTOMRIGHT', RosterFilterFrame, 'BOTTOMRIGHT')
 	frame:SetScript('OnMouseDown', function() RosterFilterFrame:StartSizing(); end)
-	frame:SetScript('OnMouseUp', function() RosterFilterFrame:StopMovingOrSizing(); end)	
-
+	frame:SetScript('OnMouseUp', function() RosterFilterFrame:StopMovingOrSizing(); end)
 end

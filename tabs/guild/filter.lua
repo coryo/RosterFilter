@@ -1,7 +1,5 @@
-module 'rosterfilter.filter'
+module 'rosterfilter.tabs.guild'
 
-include 'T'
-include 'rosterfilter'
 
 local member_cache = T
 local rank_cache = T
@@ -251,7 +249,8 @@ function M.UpdateRoster()
                 'note', note,
                 'officer_note', officer_note,
                 'online', online,
-                'offline', 0
+                'offline', 0,
+                'index', i
             )
             if not online then
                 local years, months, days, hours = GetGuildRosterLastOnline(i);
