@@ -6,6 +6,49 @@ local rank_cache = T
 local total_count = 0
 local online_count = 0
 
+local enUS_dungeons = {
+    'blackfathom deeps',
+    'blackrock depths',
+    'blackrock spire',
+    'blackwing lair',
+    'the deadmines',
+    'dire maul',
+    'gnomeregan',
+    'maraudon',
+    'molten core',
+    'naxxramas',
+    'onyxia\'s lair',
+    'ragefire chasm',
+    'razorfen downs',
+    'razorfen kraul',
+    'the ruins of ahn\'qiraj',
+    'scarlet monastery',
+    'scholomance',
+    'shadowfang keep',
+    'the stockade',
+    'stratholme',
+    'the sunken temple',
+    'the temple of ahn\'qiraj',
+    'uldaman',
+    'wailing caverns',
+    'zul\'farrak',
+    'zul\'gurub'
+}
+local enUS_battlegrounds = {
+    'warsong gulch', 
+    'arathi basin', 
+    'alterac valley'
+}
+
+local enUS_cities = {
+    'ironforge',
+    'stormwind city',
+    'darnassus',
+    'the undercity',
+    'orgrimmar',
+    'thunder bluff'
+}
+
 
 function M.index_to_rank(index)
     return rank_cache[index]
@@ -16,6 +59,30 @@ function M.rank_to_index(rank)
     for i, name in pairs(rank_cache) do
         if strlower(name) == strlower(rank) then return i; end;
     end
+end
+
+function M.is_battleground(zone)
+    local z = strlower(zone)
+    for _, d in pairs(enUS_battlegrounds) do
+        if z == d then return true; end
+    end
+    return false
+end
+
+function M.is_instance(zone)
+    local z = strlower(zone)
+    for _, d in pairs(enUS_dungeons) do
+        if z == d then return true; end
+    end
+    return false
+end
+
+function M.is_city(zone)
+    local z = strlower(zone)
+    for _, d in pairs(enUS_cities) do
+        if z == d then return true; end
+    end
+    return false
 end
 
 
@@ -208,13 +275,24 @@ function M.Query(str)
             end
         end
 
+        local zone_color;
+        if is_battleground(member.zone) then
+            zone_color = color.red
+        elseif is_instance(member.zone) then
+            zone_color = color.blue
+        elseif is_city(member.zone) then
+            zone_color = color.green
+        else
+            zone_color = color.text.enabled
+        end
+
         tinsert(rows, O(
             'cols', A(
                 O('value', '', 'sort', member.class),
                 O('value', class_color(member.name), 'sort', member.name),
                 O('value', member.level, 'sort', tonumber(member.level)),
                 O('value', member.rank, 'sort', member.rank_index),
-                O('value', member.zone, 'sort', member.zone),
+                O('value', zone_color(member.zone), 'sort', member.zone),
                 O('value', info_text, 'sort', member.offline),
                 O('value', member.note, 'sort', member.note)
             ),
