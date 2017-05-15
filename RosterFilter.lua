@@ -3,6 +3,19 @@ module 'rosterfilter'
 include 'T'
 
 _G.rf_scale = 1
+_G.BINDING_HEADER_RF_HEADER = "RosterFilter";
+_G.BINDING_NAME_TOGGLE_RF = "Toggle Window";
+
+_G.RosterFilter_ToggleWindow = function()
+	local visible = RosterFilterFrame:IsVisible()
+	if visible then
+		RosterFilterFrame:Hide()
+	else
+		GuildRoster();
+		RosterFilterFrame:Show()
+		tab = 1;
+	end
+end
 
 
 function M.print(...)
