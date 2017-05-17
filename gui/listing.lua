@@ -214,7 +214,7 @@ local methods = {
 
 	    local tex = col:CreateTexture()
 	    tex:SetAllPoints()
-	    tex:SetTexture([[Interface\AddOns\aux-AddOn\WorldStateFinalScore-Highlight]])
+	    tex:SetTexture([[Interface\AddOns\RosterFilter\WorldStateFinalScore-Highlight]])
 	    tex:SetTexCoord(.017, 1, .083, .909)
 	    tex:SetAlpha(.5)
 
