@@ -9,12 +9,17 @@ libs\inspect.lua
 libs\module.lua
 libs\T.lua
 
+locale\core.lua
+locale\class.lua
+locale\zone.lua
+
 RosterFilter.lua
 util.lua
 control.lua
 color.lua
 gui\core.lua
 frame.lua
+
 core\slash.lua
 
 gui\listing.lua
@@ -22,3 +27,6 @@ gui\listing.lua
 tabs\guild\core.lua
 tabs\guild\filter.lua
 tabs\guild\frame.lua
+
+tabs\friends\core.lua
+tabs\friends\frame.lua

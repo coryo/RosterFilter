@@ -1,4 +1,4 @@
-module 'rosterfilter.slash'
+module 'rosterfilter.core.slash'
 
 include 'rosterfilter'
 

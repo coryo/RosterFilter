@@ -51,9 +51,9 @@ do
         -- default filter
         editbox:SetText('online')
         -- focus the editbox when its shown
-        editbox:SetScript('OnShow', function()
-            editbox:SetFocus()
-        end)
+        -- editbox:SetScript('OnShow', function()
+        --     editbox:SetFocus()
+        -- end)
 
         editbox.enter = function() execute() end
         editbox.change = execute

@@ -3,9 +3,6 @@ module 'rosterfilter.tabs.guild'
 include 'T'
 include 'rosterfilter'
 
--- local filters = require 'rosterfilter.filter'
-
-
 TAB 'Guild'
 
 
@@ -30,6 +27,9 @@ end
 
 
 function OPEN()
+    -- leave tab if not in a guild
+    if not IsInGuild() then tab = 2; return; end
+
     local guildName,_,_ = GetGuildInfo('player');
     name_label:SetText(format('<%s>', guildName))
     roster_update_listener = event_listener("GUILD_ROSTER_UPDATE", function() refresh = true; end)
