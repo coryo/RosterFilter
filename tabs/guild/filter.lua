@@ -77,10 +77,23 @@ M.filters = {
                     local name,_,_,_,_,_,_,_,_,_,_ = GetRaidRosterInfo(i)
                     if name and strlower(name) == strlower(member.name) then return true; end;
                 end
-                return false;
+                return false
             end
         end
     },
+    ['raid-'] = {
+        input_type = '',
+        validator = function()
+            return function(member)
+                if GetNumRaidMembers() == 0 then return true; end;
+                for i = 1, 40 do
+                    local name,_,_,_,_,_,_,_,_,_,_ = GetRaidRosterInfo(i)
+                    if name and strlower(name) == strlower(member.name) then return false; end;
+                end
+                return true
+            end
+        end
+    },    
     ['zone'] = {
         input_type = 'string',
         validator = function(zone)
