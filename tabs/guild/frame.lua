@@ -45,7 +45,7 @@ do
     do
         local editbox = gui.editbox(frame.header)
         editbox:SetPoint('TOPLEFT', 0, 0)
-        editbox:SetWidth(300)
+        editbox:SetWidth(250)
         editbox:SetHeight(frame.header:GetHeight())
         editbox:SetAlignment('CENTER')
         -- default filter
@@ -98,8 +98,8 @@ player_listing = listing.new(frame.player_listing)
 player_listing:SetColInfo{
     {name='C', width=.02, align='LEFT'},
     {name='Name', width=.20, align='LEFT'},
-    {name='Lvl', width=.08, align='CENTER'},
-    {name='Rank', width=.15, align='RIGHT'},
+    {name='L', width=.03, align='CENTER'},
+    {name='Rank', width=.20, align='RIGHT'},
     {name='Zone', width=.20, align='CENTER'},
     {name='Info', width=.10, align='RIGHT'},
     {name='Note', width=.25, align='RIGHT'},
@@ -141,7 +141,44 @@ player_listing:SetHandler('OnClick', function(table, row_data, column, button)
             SetGuildRosterSelection(member.index)
             StaticPopup_Show("SET_GUILDOFFICERNOTE")
         end
-    end    
+    end
+
+    local ranks = O()
+    local _,_,player_rank = GetGuildInfo("player")
+    if CanGuildPromote() and member.rank_index > player_rank then
+        for i = player_rank + 1, member.rank_index do
+            ranks[i] = true
+        end
+    end
+    if CanGuildDemote() and member.rank_index > player_rank then
+        for i = member.rank_index + 1, 9 do
+            ranks[i] = true
+        end
+    end
+
+    local options = O()
+    for rank in pairs(ranks) do
+        if rank ~=  member.rank_index then
+            tinsert(options, "- set " .. index_to_rank(rank))
+            tinsert(options, {
+                function(arg1)
+                    local cur_rank = member.rank_index;
+                    local target_rank = arg1;
+                    local diff = math.abs(target_rank-cur_rank)
+                    print(member.name, index_to_rank(cur_rank), ">", index_to_rank(target_rank));
+                    if cur_rank == target_rank then
+                        return
+                    elseif target_rank < cur_rank then
+                        for i = 1, diff do GuildPromoteByName(member.name); end;
+                    else
+                        for i = 1, diff do GuildDemoteByName(member.name); end;
+                    end
+                end,
+                rank
+            })
+        end
+    end
+
 
     if button == 'RightButton' then
         gui.menu(
@@ -161,7 +198,8 @@ player_listing:SetHandler('OnClick', function(table, row_data, column, button)
             end,
             edit_note, edit_note_func,
             edit_onote, edit_onote_func,       
-            'Cancel', function () return; end
+            'Cancel', function () return; end,
+            unpack(options)
         )
     end
 end)
@@ -188,6 +226,6 @@ motd_edit_button:SetScript('OnClick', function() StaticPopup_Show("SET_GUILDMOTD
 
 motd_label = gui.label(frame.footer, gui.font_size.small)
 motd_label:SetPoint('TOPLEFT', frame.footer, 'TOPLEFT')
-motd_label:SetPoint('RIGHT', motd_edit_button, 'LEFT', -padding, 0)
+motd_label:SetPoint('BOTTOMRIGHT', motd_edit_button, 'BOTTOMLEFT', -padding, 0)
 motd_label:SetJustifyH('LEFT')
 motd_label:SetJustifyV('CENTER')
