@@ -239,7 +239,8 @@ function M.Query(str)
                 O('value', '', 'sort', member.class),
                 O('value', class_color(member.name), 'sort', member.name),
                 O('value', member.level, 'sort', tonumber(member.level)),
-                O('value', format('%s (%d)', member.rank, num_ranks - member.rank_index + 1), 'sort', member.rank_index),
+                O('value', member.rank, 'sort', member.rank_index),
+                -- O('value', format('%s (%d)', member.rank, num_ranks - member.rank_index + 1), 'sort', member.rank_index),
                 O('value', zone_color(member.zone), 'sort', member.zone),
                 O('value', info_text, 'sort', member.offline),
                 O('value', member.note, 'sort', member.note)
