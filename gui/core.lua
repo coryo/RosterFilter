@@ -26,7 +26,11 @@ do
 		UIDropDownMenu_Initialize(menu, function()
 			for i = 1, getn(arg), 2 do
 				if arg[i] ~= nil and arg[i + 1] ~= nil then
-					UIDropDownMenu_AddButton(O('text', arg[i], 'notCheckable', true, 'func', arg[i + 1]))
+					if type(arg[i + 1]) == "table" then
+						UIDropDownMenu_AddButton(O('text', arg[i], 'notCheckable', true, 'func', arg[i + 1][1], 'arg1', arg[i+1][2]))
+					else
+						UIDropDownMenu_AddButton(O('text', arg[i], 'notCheckable', true, 'func', arg[i + 1]))
+					end
 				end
 			end
 		end, 'MENU')
