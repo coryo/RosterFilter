@@ -24,6 +24,23 @@ local handlers = {
         if handler then
             handler(this.st, this.data, this)
         end
+
+        local x,y = RosterFilterFrame:GetCenter();
+        local anchor;
+        if x < GetScreenWidth() / 2 then
+            anchor = 'ANCHOR_RIGHT'
+        else
+            anchor = 'ANCHOR_LEFT'
+        end
+
+        GameTooltip:SetOwner(this, anchor)
+        for _,col in pairs(this.st.tooltipCols) do
+            local data = this.data.cols[col]
+            if data.value and data.value ~= '' then
+                GameTooltip:AddLine(data.name .. ": " .. data.value)
+            end
+        end
+        GameTooltip:Show()
     end,
 
     OnLeave = function()
@@ -37,6 +54,8 @@ local handlers = {
         if handler then
             handler(this.st, this.data, this)
         end
+
+        GameTooltip:Hide()
     end,
 
     OnClick = function()
@@ -54,11 +73,27 @@ local handlers = {
 		if handler then
 			handler(this.st, this.data, this, arg1)
 		end
-	end,
-   
+    end
+    
+
 }
 
 local methods = {
+
+    OnHeadColumnClick = function()
+        local button = arg1
+        local st = this.st
+
+        if st.sortColumn == this.colNum then
+            st.sortInvert = not st.sortInvert
+        else
+            st.sortInvert = false
+        end
+
+        st.sortColumn = this.colNum
+        st:SetSort(this.colNum)
+        st:Update()
+    end,
 
     SetSort = function(self, column)
         local invert = self.sortInvert
@@ -111,16 +146,24 @@ local methods = {
 			    col.text:SetText(self.colInfo[i].name or '')
 			    col.text:SetJustifyH(self.colInfo[i].headAlign or 'CENTER')
                 col:RegisterForClicks('LeftButtonUp')
-                col:SetScript('OnClick', function() 
-                    self.sortColumn = this.colNum
-                    self.sortInvert = not self.sortInvert
-                    self:SetSort(this.colNum)
-                    self:Update()
-                end)
+                col:SetScript('OnClick', self.OnHeadColumnClick)
+
+                local tex = col:GetNormalTexture()
+                tex:SetTexture[[Interface\AddOns\aux-AddOn\WorldStateFinalScore-Highlight]]
+                tex:SetTexCoord(.017, 1, .083, .909)
+                tex:SetAlpha(.5)                
 		    else
 			    col:Hide()
 		    end
-	    end
+        end
+        
+        if self.isSorted and self.sortColumn < getn(self.headCols) then
+            if self.sortInvert then
+                self.headCols[self.sortColumn]:GetNormalTexture():SetTexture(.8, .6, 1, .8)
+            else
+                self.headCols[self.sortColumn]:GetNormalTexture():SetTexture(.6, .8, 1, .8)
+            end
+        end
 
 	    while getn(self.rows) < self:GetNumRows() do
 		    self:AddRow()
@@ -212,11 +255,19 @@ local methods = {
 	    text:SetTextColor(color.label.enabled())
         col.text = text
 
-	    local tex = col:CreateTexture()
-	    tex:SetAllPoints()
-	    tex:SetTexture([[Interface\AddOns\RosterFilter\WorldStateFinalScore-Highlight]])
-	    tex:SetTexCoord(.017, 1, .083, .909)
-	    tex:SetAlpha(.5)
+        local tex = col:CreateTexture()
+        tex:SetAllPoints()
+        tex:SetTexture([[Interface\AddOns\aux-AddOn\WorldStateFinalScore-Highlight]])
+        tex:SetTexCoord(.017, 1, .083, .909)
+        tex:SetAlpha(.5)
+        col:SetNormalTexture(tex)
+
+        local tex = col:CreateTexture()
+        tex:SetAllPoints()
+        tex:SetTexture([[Interface\Buttons\UI-Listbox-Highlight]])
+        tex:SetTexCoord(.025, .957, .087, .931)
+        tex:SetAlpha(.2)
+        col:SetHighlightTexture(tex)        
 
         tinsert(self.headCols, col)
         
@@ -339,6 +390,7 @@ function M.new(parent)
     st.isSorted = false
     st.sortColumn = 1
     st.sortInvert = false
+    st.tooltipCols = {}
 
     return st
 end

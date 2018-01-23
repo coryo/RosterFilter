@@ -80,11 +80,11 @@ function update_listing()
         
         tinsert(rows, O(
             'cols', A(
-                O('value', '', 'sort', friend.class),
-                O('value', class_color(friend.name) .. ' ' .. friend.status, 'sort', friend.name),
-                O('value', friend.level, 'sort', tonumber(friend.level)),
-                O('value', zone_color(friend.zone), 'sort', friend.zone),
-                O('value', friend.online, 'sort', friend.online)
+                O('name', 'class', 'value', '', 'sort', friend.class),
+                O('name', 'name', 'value', class_color(friend.name) .. ' ' .. friend.status, 'sort', friend.name),
+                O('name', 'level', 'value', friend.level, 'sort', tonumber(friend.level)),
+                O('name', 'zone', 'value', zone_color(friend.zone), 'sort', friend.zone),
+                O('name', 'online', 'value', friend.online, 'sort', friend.online)
             ),
             'record', friend,
             'alpha', alpha

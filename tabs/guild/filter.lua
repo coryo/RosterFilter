@@ -236,14 +236,15 @@ function M.Query(str)
         local num_ranks = table.getn(rank_cache)
         tinsert(rows, O(
             'cols', A(
-                O('value', '', 'sort', member.class),
-                O('value', class_color(member.name), 'sort', member.name),
-                O('value', member.level, 'sort', tonumber(member.level)),
-                O('value', member.rank, 'sort', member.rank_index),
-                -- O('value', format('%s (%d)', member.rank, num_ranks - member.rank_index + 1), 'sort', member.rank_index),
-                O('value', zone_color(member.zone), 'sort', member.zone),
-                O('value', info_text, 'sort', member.offline),
-                O('value', member.note, 'sort', member.note)
+                O('name', 'class', 'value', '', 'sort', member.class),
+                O('name', 'name', 'value', class_color(member.name), 'sort', member.name),
+                O('name', 'level', 'value', member.level, 'sort', tonumber(member.level)),
+                O('name', 'rank', 'value', member.rank, 'sort', member.rank_index),
+                -- O('name', '', 'value', format('%s (%d)', member.rank, num_ranks - member.rank_index + 1), 'sort', member.rank_index),
+                O('name', 'zone', 'value', zone_color(member.zone), 'sort', member.zone),
+                O('name', 'note', 'value', member.note, 'sort', member.note),
+                O('name', 'info', 'value', info_text, 'sort', member.offline),
+                O('name', 'officer note', 'value', member.officer_note, 'sort', member.officer_note)
             ),
             'record', member,
             'alpha', alpha

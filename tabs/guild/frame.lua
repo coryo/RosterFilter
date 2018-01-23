@@ -81,12 +81,12 @@ do
     end
 end
 
-name_label = gui.label(frame.header, gui.font_size.large)
+name_label = gui.label(frame.header, gui.font_size.medium)
 name_label:SetPoint('TOPRIGHT', frame.header, 'TOPRIGHT', 0, 0)
 
-status_label = gui.label(frame.header, gui.font_size.medium)
+status_label = gui.label(frame.header, gui.font_size.small)
 status_label:SetText('0 / 0 / 0')
-status_label:SetPoint('TOPRIGHT', name_label, 'TOPLEFT', -padding, 0)
+status_label:SetPoint('TOPRIGHT', name_label, 'BOTTOMRIGHT', -padding, 0)
 
 
 -- CONTENT --------------------------------------------------------------------
@@ -101,9 +101,11 @@ player_listing:SetColInfo{
     {name='L', width=.03, align='CENTER'},
     {name='Rank', width=.20, align='RIGHT'},
     {name='Zone', width=.20, align='CENTER'},
-    {name='Info', width=.10, align='RIGHT'},
-    {name='Note', width=.25, align='RIGHT'},
+    -- {name='Info', width=.10, align='RIGHT'},
+    {name='Note', width=.35, align='RIGHT'},
 }
+
+player_listing.tooltipCols = {2, 6, 7, 8}
 
 
 player_listing:SetSelection(function(data)
