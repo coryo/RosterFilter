@@ -2,6 +2,8 @@
 
 a WoW 1.12.1 guild frame. based on aux.
 
+![rosterfilter](https://user-images.githubusercontent.com/678207/35249442-033ff192-ffa0-11e7-81e1-8cbca0b08d71.png)
+
 access with `/rf`. or set a keybinding in the standard Key Bindings menu.
 
 `/rf scale 0.8` change the window scale
