@@ -147,7 +147,7 @@ player_listing:SetHandler('OnClick', function(table, row_data, column, button)
     end
 
     local ranks = {}
-    local _,_,player_rank = GetGuildInfo("player")
+    local _, _, player_rank, realm = GetGuildInfo("player")
     if CanGuildPromote() and member.rank_index > player_rank then
         for i = player_rank + 1, member.rank_index do
             ranks[i] = true
@@ -167,14 +167,11 @@ player_listing:SetHandler('OnClick', function(table, row_data, column, button)
                 function(arg1)
                     local cur_rank = member.rank_index;
                     local target_rank = arg1;
-                    local diff = math.abs(target_rank-cur_rank)
                     print(member.name, index_to_rank(cur_rank), ">", index_to_rank(target_rank));
                     if cur_rank == target_rank then
                         return
-                    elseif target_rank < cur_rank then
-                        for i = 1, diff do GuildPromoteByName(member.name); end;
                     else
-                        for i = 1, diff do GuildDemoteByName(member.name); end;
+                        SetGuildMemberRank(member.index, target_rank);
                     end
                 end,
                 rank
