@@ -1,11 +1,11 @@
-module 'rosterfilter'
+select(2, ...) 'rosterfilter'
 
 local gui = require 'rosterfilter.gui'
 
 
-function LOAD()
-	for i = 1, getn(tab_info) do
-		tabs:create_tab(tab_info[i].name)
+function handle.LOAD()
+	for _, v in ipairs(tab_info) do
+		tabs:create_tab(v.name)
 	end
 end
 
@@ -20,12 +20,12 @@ do
 	frame:EnableMouse(true)
 	frame:SetClampedToScreen(true)
 	frame:RegisterForDrag('LeftButton')
-	frame:SetScript('OnMouseDown', function() if IsControlKeyDown() then this:StartSizing(); end end)
-	frame:SetScript('OnMouseUp', function() this:StopMovingOrSizing(); end)
-	frame:SetScript('OnDragStart', function() this:StartMoving() end)
-	frame:SetScript('OnDragStop', function() this:StopMovingOrSizing() end)
-	frame:SetScript('OnShow', function() PlaySound('igMainMenuOpen') end)
-	frame:SetScript('OnHide', function() PlaySound('igMainMenuClose'); end)
+	frame:SetScript('OnMouseDown', function(self) if IsControlKeyDown() then self:StartSizing(); end end)
+	frame:SetScript('OnMouseUp', function(self) self:StopMovingOrSizing(); end)
+	frame:SetScript('OnDragStart', function(self) self:StartMoving() end)
+	frame:SetScript('OnDragStop', function(self) self:StopMovingOrSizing() end)
+	frame:SetScript('OnShow', function() PlaySound(SOUNDKIT.IG_MAINMENU_OPEN) end)
+	frame:SetScript('OnHide', function() PlaySound(SOUNDKIT.IG_MAINMENU_CLOSE); end)
 	frame.content = CreateFrame('Frame', nil, frame)
 	frame.content:SetAllPoints()
 	frame:Hide()

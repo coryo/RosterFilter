@@ -1,11 +1,10 @@
-module 'rosterfilter.locale'
+select(2, ...) 'rosterfilter.locale'
 
-require 'T'
 
 local default = 'enUS'
 local active_locale = GetLocale()
 
-local database = T
+local database = {}
 
 local translations = {}
 translations.mt = {}

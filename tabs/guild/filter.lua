@@ -1,12 +1,13 @@
-module 'rosterfilter.tabs.guild'
+select(2, ...) 'rosterfilter.tabs.guild'
 
+local rosterfilter = require 'rosterfilter'
 local locale = require 'rosterfilter.locale'
 local zones = require 'rosterfilter.locale.zone'
 local L = locale.L
 
 
-local member_cache = T
-local rank_cache = T
+local member_cache = {}
+local rank_cache = {}
 local total_count = 0
 local online_count = 0
 
@@ -24,7 +25,7 @@ end
 
 M.filters = {
     ['default-filter'] = {
-        input_type = '',
+        input_type = 'string',
         validator = function(str)
             return function(member)
                 local qry = strlower(str)
@@ -72,7 +73,7 @@ M.filters = {
         input_type = '',
         validator = function()
             return function(member)
-                if GetNumRaidMembers() == 0 then return false; end;
+                if GetNumGroupMembers() == 0 then return false; end;
                 for i = 1, 40 do
                     local name,_,_,_,_,_,_,_,_,_,_ = GetRaidRosterInfo(i)
                     if name and strlower(name) == strlower(member.name) then return true; end;
@@ -85,7 +86,7 @@ M.filters = {
         input_type = '',
         validator = function()
             return function(member)
-                if GetNumRaidMembers() == 0 then return true; end;
+                if GetNumGroupMembers() == 0 then return true; end;
                 for i = 1, 40 do
                     local name,_,_,_,_,_,_,_,_,_,_ = GetRaidRosterInfo(i)
                     if name and strlower(name) == strlower(member.name) then return false; end;
@@ -93,7 +94,7 @@ M.filters = {
                 return true
             end
         end
-    },    
+    },
     ['zone'] = {
         input_type = 'string',
         validator = function(zone)
@@ -140,13 +141,13 @@ M.filters = {
                 local min = 1;
                 local max = 60;
 
-                local parts = str and map(split(str, '-'), function(part) return trim(part) end) or T
+                local parts = str and rosterfilter.map(rosterfilter.split(str, '-'), function(part) return rosterfilter.trim(part) end) or {}
 
                 if parts[1] ~= '' and parts[1] ~= nil then
                     min = tonumber(parts[1]) or 1
                     max = tonumber(parts[2]) or min
                 end
-                
+
                 return (member.level >= min) and (member.level <= max);
             end
         end
@@ -157,7 +158,7 @@ M.filters = {
 function M.parse_filter_string(str)
     local used_filters = {}
 
-    local parts = str and map(split(str, '/'), function(part) return strlower(trim(part)) end) or ''
+    local parts = str and rosterfilter.map(rosterfilter.split(str, '/'), function(part) return strlower(rosterfilter.trim(part)) end) or ''
 
     local i = 1;
     while parts[i] do
@@ -183,7 +184,7 @@ function M.Query(str)
 
     UpdateRoster()
 
-    local working_set = T
+    local working_set = {}
 
     for i = 1, table.getn(member_cache) do
         tinsert(working_set, i)
@@ -192,7 +193,7 @@ function M.Query(str)
     for i, filter in pairs(used_filters) do
         if filters[filter.filter] then
             local validator = filters[filter.filter].validator(filter.args)
-            local subset = T
+            local subset = {}
 
             for _,index in pairs(working_set) do
                 local member = member_cache[index]
@@ -204,11 +205,11 @@ function M.Query(str)
         end
     end
 
-    local rows = T
+    local rows = {}
     for _,index in pairs(working_set) do
         local member = member_cache[index]
-        
-        local class_color = color.class[strlower(member.class)]
+
+        local class_color = rosterfilter.color.class[strlower(member.class)]
 
         local info_text;
         local alpha = 1.0;
@@ -225,30 +226,30 @@ function M.Query(str)
 
         local zone_color;
         if zones.IsBattleground(member.zone) then
-            zone_color = color.red
+            zone_color = rosterfilter.color.red
         elseif zones.IsDungeon(member.zone) then
-            zone_color = color.blue
+            zone_color = rosterfilter.color.blue
         elseif zones.IsCity(member.zone) then
-            zone_color = color.green
+            zone_color = rosterfilter.color.green
         else
-            zone_color = color.text.enabled
+            zone_color = rosterfilter.color.text.enabled
         end
         local num_ranks = table.getn(rank_cache)
-        tinsert(rows, O(
-            'cols', A(
-                O('name', 'class', 'value', '', 'sort', member.class),
-                O('name', 'name', 'value', class_color(member.name), 'sort', member.name),
-                O('name', 'level', 'value', member.level, 'sort', tonumber(member.level)),
-                O('name', 'rank', 'value', member.rank, 'sort', member.rank_index),
-                -- O('name', '', 'value', format('%s (%d)', member.rank, num_ranks - member.rank_index + 1), 'sort', member.rank_index),
-                O('name', 'zone', 'value', zone_color(member.zone), 'sort', member.zone),
-                O('name', 'note', 'value', member.note, 'sort', member.note),
-                O('name', 'info', 'value', info_text, 'sort', member.offline),
-                O('name', 'officer note', 'value', member.officer_note, 'sort', member.officer_note)
-            ),
-            'record', member,
-            'alpha', alpha
-        ))
+        tinsert(rows, {
+            ['cols'] = {
+                {['name'] = 'class', ['value'] = '', ['sort'] = member.class},
+                {['name'] = 'name', ['value'] = class_color(member.name), ['sort'] = member.name},
+                {['name'] = 'level', ['value'] = member.level, ['sort'] = tonumber(member.level)},
+                {['name'] = 'rank', ['value'] = member.rank, ['sort'] = member.rank_index},
+                -- {['name'] = '', ['value'] = format('%s (%d)', member.rank, num_ranks - member.rank_index + 1), ['sort'] = member.rank_index},
+                {['name'] = 'zone', ['value'] = zone_color(member.zone), ['sort'] = member.zone},
+                {['name'] = 'note', ['value'] = member.note, ['sort'] = member.note},
+                {['name'] = 'info', ['value'] = info_text, ['sort'] = member.offline},
+                {['name'] = 'officer note', ['value'] = member.officer_note, ['sort'] = member.officer_note}
+            },
+            ['record'] = member,
+            ['alpha'] = alpha
+        })
     end
 
     return rows or nil
@@ -256,30 +257,30 @@ end
 
 
 function M.UpdateRoster()
-    wipe(member_cache)
+    rosterfilter.wipe(member_cache)
     rank_cache = {}
     total_count = 0
     online_count = 0
 
-    local guild_members = GetNumGuildMembers(true);
-    
+    local guild_members, num_online_max, num_online = GetNumGuildMembers();
+
     for i = 1, guild_members do
-        local name, rank, rank_index, level, class, zone, note, officer_note, online = GetGuildRosterInfo(i);
-        
+        local name, rank, rank_index, level, class, zone, note, officer_note, online, status, classFileName = GetGuildRosterInfo(i);
+
         if name then
-            local member = O(
-                'name', name,
-                'rank', rank,
-                'rank_index', rank_index,
-                'level', level,
-                'class', class,
-                'zone', zone,
-                'note', note,
-                'officer_note', officer_note,
-                'online', online,
-                'offline', 0,
-                'index', i
-            )
+            local member = {
+                ['name'] = rosterfilter.split(name, '-')[1],
+                ['rank'] = rank,
+                ['rank_index'] = rank_index,
+                ['level'] = level,
+                ['class'] = class,
+                ['zone'] = zone,
+                ['note'] = note,
+                ['officer_note'] = officer_note,
+                ['online'] = online,
+                ['offline'] = 0,
+                ['index'] = i
+            }
             if not online then
                 local years, months, days, hours = GetGuildRosterLastOnline(i);
                 local toff = (((years*12)+months)*30.5+days)*24+hours;

@@ -1,88 +1,137 @@
-module 'rosterfilter'
+select(2, ...) 'rosterfilter'
 
-M.immutable = setmetatable(T, {
+M.immutable = setmetatable({}, {
 	__metatable = false,
-	__newindex = nop,
+	__newindex = pass,
 	__sub = function(_, t)
-		return setmetatable(T, O('__metatable', false, '__newindex', nop, '__index', t))
+		return setmetatable({}, { __metatable = false, __newindex = pass, __index = t })
 	end
 })
 
-M.select = vararg-function(arg)
-	for _ = 1, arg[1] do
-		tremove(arg, 1)
-	end
-	if getn(arg) == 0 then
-		return nil
-	else
-		return unpack(arg)
-	end
+
+function M.pluralize(text)
+    local text = gsub(text, '(-?%d+)(.-)|4([^;]-);', function(number_string, gap, number_forms)
+        local singular, dual, plural
+        _, _, singular, dual, plural = strfind(number_forms, '(.+):(.+):(.+)');
+        if not singular then
+            _, _, singular, plural = strfind(number_forms, '(.+):(.+)')
+        end
+        local i = abs(tonumber(number_string))
+        local number_form
+        if i == 1 then
+            number_form = singular
+        elseif i == 2 then
+            number_form = dual or plural
+        else
+            number_form = plural
+        end
+        return number_string .. gap .. number_form
+    end)
+    return text
+end
+
+function M.wipe(t)
+    setmetatable(t, nil)
+    for k in pairs(t) do
+        t[k] = nil
+    end
+end
+
+function M.set(...)
+    local t = {}
+    for i = 1, select('#', ...) do
+        t[select(i, ...)] = true
+    end
+    return t
+end
+
+function M.iter(...)
+    local t = {}
+    for i = 1, select('#', ...) do
+        t[select(i, ...)] = true
+    end
+    return pairs(t)
+end
+
+function M.assign(t1, t2)
+    for k, v in pairs(t2) do
+        if t1[k] == nil then
+            t1[k] = v
+        end
+    end
+    return t1
+end
+
+function M.enum(n)
+	if n > 0 then return rosterfilter.immutable-{}, enum(n - 1) end
 end
 
 M.join = table.concat
 
-function M.range(arg1, arg2)
-	local i, n = arg2 and arg1 or 1, arg2 or arg1
-	if i <= n then return first, range(i + 1, n) end
+M.index = function(t, ...)
+	for _, v in ipairs{...} do
+		t = t and t[v]
+	end
+	return t
 end
 
-function M.replicate(count, value)
-	if count > 0 then return value, replicate(count - 1, value) end
-end
-
-M.index = vararg-function(arg)
-	local t = tremove(arg, 1)
-	for i = 1, getn(arg) do t = t and t[arg[i]] end return t
-end
-
-M.huge = 1.8 * 10 ^ 308
-
-function M.get_modified()
+function M.modified()
 	return IsShiftKeyDown() or IsControlKeyDown() or IsAltKeyDown()
 end
 
 function M.copy(t)
-	local copy = T
-	for k, v in t do copy[k] = v end
-	table.setn(copy, getn(t))
+	local copy = {}
+	for k, v in pairs(t) do
+		copy[k] = v
+	end
 	return setmetatable(copy, getmetatable(t))
 end
 
 function M.size(t)
 	local size = 0
-	for _ in t do size = size + 1 end
+	for _ in pairs(t) do
+		size = size + 1
+	end
 	return size
 end
 
 function M.key(t, value)
-	for k, v in t do if v == value then return k end end
+	for k, v in pairs(t) do
+		if v == value then
+			return k
+		end
+	end
 end
 
 function M.keys(t)
-	local keys = T
-	for k in t do tinsert(keys, k) end
+	local keys = {}
+	for k in pairs(t) do
+		tinsert(keys, k)
+	end
 	return keys
 end
 
 function M.values(t)
-	local values = T
-	for _, v in t do tinsert(values, v) end
+	local values = {}
+	for _, v in pairs(t) do
+		tinsert(values, v)
+	end
 	return values
 end
 
 function M.eq(t1, t2)
 	if not t1 or not t2 then return false end
-	for key, value in t1 do
+	for key, value in pairs(t1) do
 		if t2[key] ~= value then return false end
 	end
-	for key, value in t2 do
+	for key, value in pairs(t2) do
 		if t1[key] ~= value then return false end
 	end
 	return true
 end
 
 function M.any(t, predicate)
-	for _, v in t do
+	for _, v in pairs(t) do
 		if predicate then
 			if predicate(v) then return true end
 		elseif v then
@@ -93,7 +142,7 @@ function M.any(t, predicate)
 end
 
 function M.all(t, predicate)
-	for _, v in t do
+	for _, v in pairs(t) do
 		if predicate then
 			if not predicate(v) then return false end
 		elseif not v then
@@ -104,14 +153,16 @@ function M.all(t, predicate)
 end
 
 function M.filter(t, predicate)
-	for k, v in t do
+	for k, v in pairs(t) do
 		if not predicate(v, k) then t[k] = nil end
 	end
 	return t
 end
 
 function M.map(t, f)
-	for k, v in t do t[k] = f(v, k) end
+	for k, v in pairs(t) do
+		t[k] = f(v, k)
+	end
 	return t
 end
 
@@ -120,7 +171,7 @@ function M.trim(str)
 end
 
 function M.split(str, separator)
-	local parts = T
+	local parts = {}
 	while true do
 		local start_index = strfind(str, separator, 1, true)
 		if start_index then
@@ -136,8 +187,8 @@ function M.split(str, separator)
 end
 
 function M.tokenize(str)
-	local tokens = T
-	for token in string.gfind(str, '%S+') do tinsert(tokens, token) end
+	local tokens = {}
+	for token in string.gmatch(str, '%S+') do tinsert(tokens, token) end
 	return tokens
 end
 
@@ -155,11 +206,10 @@ function M.later(t, t0)
 end
 
 function M.signal()
-	local params
-	return vararg-function(arg)
-		static(arg)
-		params = arg
+	local arg
+	return function(...)
+        arg = {...}
 	end, function()
-		return params
+		return arg
 	end
 end

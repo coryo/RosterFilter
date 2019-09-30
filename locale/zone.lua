@@ -1,5 +1,6 @@
-module 'rosterfilter.locale.zone'
+select(2, ...) 'rosterfilter.locale.zone'
 
+local rosterfilter = require 'rosterfilter'
 local locale = require 'rosterfilter.locale'
 
 
@@ -9,7 +10,7 @@ function M.IsCity(zone)
         or zone == locale.L["Darnassus"]
         or zone == locale.L["Orgrimmar"]
         or zone == locale.L["Thunder Bluff"]
-        or zone == locale.L["The Undercity"]
+        or zone == locale.L["Undercity"]
 end
 
 
@@ -249,7 +250,7 @@ locale.RegisterTranslations("deDE", function()
 		["Wetlands"] = "Sumpfland",
 		["Winterspring"] = "Winterspring",
 		["Zul'Farrak"] = "Zul'Farrak",
-		["Zul'Gurub"] = "Zul'Gurub",        
+		["Zul'Gurub"] = "Zul'Gurub",
 	}
 end)
 
@@ -350,7 +351,7 @@ locale.RegisterTranslations("frFR", function()
 		["Wetlands"] = "Les Paluns (Wetlands)",
 		["Winterspring"] = "Berceau-de-l'Hiver (Winterspring)",
 		["Zul'Farrak"] = "Zul'Farrak",
-		["Zul'Gurub"] = "Zul'Gurub",        
+		["Zul'Gurub"] = "Zul'Gurub",
 	}
 end)
 
@@ -451,7 +452,7 @@ locale.RegisterTranslations("zhCN", function()
 		["Wetlands"] = "湿地",
 		["Winterspring"] = "冬泉谷",
 		["Zul'Farrak"] = "祖尔法拉克",
-		["Zul'Gurub"] = "祖尔格拉布",        
+		["Zul'Gurub"] = "祖尔格拉布",
 	}
 end)
 
@@ -511,9 +512,9 @@ locale.RegisterTranslations("koKR", function()
 		["Menethil Harbor"] = "메네실 항구",
 		["Molten Core"] = "화산 심장부",
 		["Moonglade"] = "달의 숲",
-		["Mulgore"] = "멀고어",		
+		["Mulgore"] = "멀고어",
 		["Naxxramas"] = "낙스라마스",
-		["Onyxia's Lair"] = "오닉시아의 둥지",		
+		["Onyxia's Lair"] = "오닉시아의 둥지",
 		["Orgrimmar"] = "오그리마",
 		["Ratchet"] = "톱니항",
 		["Ragefire Chasm"] = "성난 불길협곡",
@@ -552,6 +553,6 @@ locale.RegisterTranslations("koKR", function()
 		["Wetlands"] = "저습지",
 		["Winterspring"] = "여명의 설원",
 		["Zul'Farrak"] = "줄파락",
-		["Zul'Gurub"] = "줄구룹",        
+		["Zul'Gurub"] = "줄구룹",
 	}
 end)

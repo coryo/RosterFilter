@@ -1,5 +1,6 @@
-module 'rosterfilter.tabs.friends'
+select(2, ...) 'rosterfilter.tabs.friends'
 
+local rosterfilter = require 'rosterfilter'
 local gui = require 'rosterfilter.gui'
 local listing = require 'rosterfilter.gui.listing'
 
@@ -46,9 +47,10 @@ player_listing = listing.new(frame.player_listing)
 
 player_listing:SetColInfo{
     {name='C', width=.1, align='LEFT'},
-    {name='Name', width=.3, align='LEFT'},
-    {name='Lvl', width=.3, align='CENTER'},
-    {name='Zone', width=.3, align='CENTER'}
+    {name='Name', width=.2, align='LEFT'},
+    {name='Lvl', width=.2, align='CENTER'},
+    {name='Zone', width=.2, align='CENTER'},
+    {name='Notes', width=.3, align='LEFT'}
 }
 
 
@@ -70,7 +72,7 @@ player_listing:SetHandler('OnClick', function(table, row_data, column, button)
                 ChatFrameEditBox:SetText('/w '..friend.name);
             end,
             'Invite', function () InviteByName(friend.name) end,
-            'Target', function () 
+            'Target', function ()
                 if (ChatFrameEditBox:IsVisible()) then
                     ChatEdit_OnEscapePressed(ChatFrameEditBox);
                 end

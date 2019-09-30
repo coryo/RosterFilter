@@ -1,6 +1,5 @@
-module 'rosterfilter'
+select(2, ...) 'rosterfilter'
 
-include 'T'
 
 _G.rf_scale = 1
 _G.BINDING_HEADER_RF_HEADER = "RosterFilter";
@@ -13,69 +12,89 @@ _G.RosterFilter_ToggleWindow = function()
 	else
 		GuildRoster();
 		RosterFilterFrame:Show()
-		tab = 1;
+		set_tab(1)
 	end
 end
 
 
 function M.print(...)
-    DEFAULT_CHAT_FRAME:AddMessage(LIGHTYELLOW_FONT_COLOR_CODE .. '<rosterfilter> ' .. join(map(arg, tostring), ' '))
+    DEFAULT_CHAT_FRAME:AddMessage(LIGHTYELLOW_FONT_COLOR_CODE .. '<rosterfilter> ' .. join(map({...}, tostring), ' '))
 end
 
 
 local event_frame = CreateFrame'Frame'
-for event in temp-S('ADDON_LOADED', 'VARIABLES_LOADED', 'PLAYER_LOGIN') do
+for _, event in pairs{'ADDON_LOADED', 'PLAYER_LOGIN'} do
 	event_frame:RegisterEvent(event)
 end
 
+local set_handler = {}
+M.handle = setmetatable({}, {__metatable=false, __newindex=function(_, k, v) set_handler[k](v) end})
 
 do
 	local handlers, handlers2 = {}, {}
-	function M.set_LOAD(f)
+	function set_handler.LOAD(f)
 		tinsert(handlers, f)
 	end
-	function M.set_LOAD2(f)
+	function set_handler.LOAD2(f)
 		tinsert(handlers2, f)
 	end
-	event_frame:SetScript('OnEvent', function()
+	event_frame:SetScript('OnEvent', function(_, event, arg1, ...)
 		if event == 'ADDON_LOADED' then
-            --
-		elseif event == 'VARIABLES_LOADED' then
-			for _, f in handlers do f() end
+			if arg1 == 'RosterFilter' then
+				for _, f in ipairs(handlers) do f(arg1, ...) end
+			end
 		elseif event == 'PLAYER_LOGIN' then
-			for _, f in handlers2 do f() end
+			for _, f in ipairs(handlers2) do f(arg1, ...) end
 			print('loaded - /rf')
 		else
-			_M[event]()
+			_M[event](arg1, ...)
 		end
 	end)
 end
 
+function handle.LOAD()
+	_G.rosterfilter = rosterfilter or {}
+end
 
-function LOAD2()
+
+function handle.LOAD2()
 	RosterFilterFrame:SetScale(rf_scale)
 end
 
 
 tab_info = {}
-function M.TAB(name)
-	local tab = O('name', name)
-	local env = getfenv(2)
-	function env.set_OPEN(f) tab.OPEN = f end
-	function env.set_CLOSE(f) tab.CLOSE = f end
-	function env.set_USE_ITEM(f) tab.USE_ITEM = f end
-	function env.set_CLICK_LINK(f) tab.CLICK_LINK = f end
+function M.tab(name)
+	local tab = { name = name }
+	local tab_event = {
+	OPEN = function(f) tab.OPEN = f end,
+	CLOSE = function(f) tab.CLOSE = f end,
+	USE_ITEM = function(f) tab.USE_ITEM = f end,
+	CLICK_LINK = function(f) tab.CLICK_LINK = f end,
+	}
 	tinsert(tab_info, tab)
+	return setmetatable({}, {__metatable=false, __newindex=function(_, k, v) tab_event[k](v) end})
 end
-
 
 do
 	local index
-	function get_active_tab() return tab_info[index] end
+	function M.get_tab() return tab_info[index] end
 	function on_tab_click(i)
-		CloseDropDownMenus()
-		do (index and active_tab.CLOSE or nop)() end
+		do (index and get_tab().CLOSE or pass)() end
 		index = i
-		do (index and active_tab.OPEN or nop)() end
+		do (index and get_tab().OPEN or pass)() end
 	end
+end
+
+M.orig = setmetatable({[_G]={}}, {__index=function(self, key) return self[_G][key] end})
+function M.hook(...)
+	local name, object, handler
+	if select('#', ...) == 3 then
+		name, object, handler = ...
+	else
+		object, name, handler = _G, ...
+	end
+	handler = handler or getfenv(3)[name]
+	orig[object] = orig[object] or {}
+	orig[object][name], object[name] = object[name], handler
+	return hook
 end

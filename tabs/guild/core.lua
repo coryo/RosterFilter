@@ -1,40 +1,27 @@
-module 'rosterfilter.tabs.guild'
+select(2, ...) 'rosterfilter.tabs.guild'
 
-include 'T'
-include 'rosterfilter'
+local rosterfilter = require 'rosterfilter'
 
-TAB 'Guild'
+local tab = rosterfilter.tab 'Guild'
 
-
-do
-	local c = 0
-	function get_refresh() return c end
-	function set_refresh(v) c = v end
-end
-
-do
-    local q = ''
-    function get_query() return q end
-    function set_query(v) q = v end
-end
 
 local roster_update_listener, player_guild_update_listener, motd_listener;
 
 
-function LOAD()
-    
+function rosterfilter.handle.LOAD()
+
 end
 
 
-function OPEN()
+function tab.OPEN()
     -- leave tab if not in a guild
-    if not IsInGuild() then tab = 2; return; end
+    if not IsInGuild() then rosterfilter.set_tab(2); return; end
 
     local guildName,_,_ = GetGuildInfo('player');
     name_label:SetText(format('<%s>', guildName))
-    roster_update_listener = event_listener("GUILD_ROSTER_UPDATE", function() refresh = true; end)
-    player_guild_update_listener = event_listener("PLAYER_GUILD_UPDATE", function() refresh = true; end)
-    motd_listener = event_listener("GUILD_MOTD", function(self, message) motd_label:SetText(message); end)
+    roster_update_listener = rosterfilter.event_listener("GUILD_ROSTER_UPDATE", function() refresh = true; end)
+    player_guild_update_listener = rosterfilter.event_listener("PLAYER_GUILD_UPDATE", function() refresh = true; end)
+    motd_listener = rosterfilter.event_listener("GUILD_MOTD", function(self, message) motd_label:SetText(message); end)
 
     if not CanEditMOTD() then
         motd_edit_button:Disable()
@@ -47,8 +34,8 @@ function OPEN()
 end
 
 
-function CLOSE()
-    frame:Hide()   
+function tab.CLOSE()
+    frame:Hide()
 end
 
 
@@ -69,7 +56,7 @@ end
 
 
 function on_hide()
-    kill_listener(roster_update_listener)
-    kill_listener(player_guild_update_listener)
-    kill_listener(motd_listener)
+    rosterfilter.kill_listener(roster_update_listener)
+    rosterfilter.kill_listener(player_guild_update_listener)
+    rosterfilter.kill_listener(motd_listener)
 end

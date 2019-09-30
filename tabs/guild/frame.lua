@@ -1,5 +1,6 @@
-module 'rosterfilter.tabs.guild'
+select(2, ...) 'rosterfilter.tabs.guild'
 
+local rosterfilter = require 'rosterfilter'
 local gui = require 'rosterfilter.gui'
 local listing = require 'rosterfilter.gui.listing'
 
@@ -36,9 +37,9 @@ end)
 
 -- HEADER ---------------------------------------------------------------------
 do
-    local function execute()
-        query = this:GetText()
-        this:SetText(query)
+    local function execute(self)
+        query = self:GetText()
+        self:SetText(query)
         refresh = true
     end
 
@@ -55,7 +56,7 @@ do
         --     editbox:SetFocus()
         -- end)
 
-        editbox.enter = function() execute() end
+        editbox.enter = function(self) execute(self) end
         editbox.change = execute
 
         -- shortcut buttons
@@ -145,7 +146,7 @@ player_listing:SetHandler('OnClick', function(table, row_data, column, button)
         end
     end
 
-    local ranks = O()
+    local ranks = {}
     local _,_,player_rank = GetGuildInfo("player")
     if CanGuildPromote() and member.rank_index > player_rank then
         for i = player_rank + 1, member.rank_index do
@@ -158,7 +159,7 @@ player_listing:SetHandler('OnClick', function(table, row_data, column, button)
         end
     end
 
-    local options = O()
+    local options = {}
     for rank in pairs(ranks) do
         if rank ~=  member.rank_index then
             tinsert(options, "- set " .. index_to_rank(rank))
@@ -185,21 +186,15 @@ player_listing:SetHandler('OnClick', function(table, row_data, column, button)
     if button == 'RightButton' then
         gui.menu(
             'Whisper', function()
-                if (ChatFrameEditBox:IsVisible()) then
-                    ChatEdit_OnEscapePressed(ChatFrameEditBox);
+                if (DEFAULT_CHAT_FRAME.editBox:IsVisible()) then
+                    ChatEdit_OnEscapePressed(DEFAULT_CHAT_FRAME.editBox);
                 end
-                ChatFrameEditBox:SetText('/w '..member.name);
+                DEFAULT_CHAT_FRAME.editBox:Show()
+                DEFAULT_CHAT_FRAME.editBox:SetText('/w '..member.name .. ' ');
             end,
-            'Invite', function () InviteByName(member.name) end,
-            'Target', function () 
-                if (ChatFrameEditBox:IsVisible()) then
-                    ChatEdit_OnEscapePressed(ChatFrameEditBox);
-                end
-                ChatFrameEditBox:SetText('/tar '..member.name);
-                ChatEdit_SendText(ChatFrameEditBox);
-            end,
+            'Invite', function () InviteUnit(member.name) end,
             edit_note, edit_note_func,
-            edit_onote, edit_onote_func,       
+            edit_onote, edit_onote_func,
             'Cancel', function () return; end,
             unpack(options)
         )

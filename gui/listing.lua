@@ -1,8 +1,6 @@
-module 'rosterfilter.gui.listing'
+select(2, ...) 'rosterfilter.gui.listing'
 
-include 'T'
-include 'rosterfilter'
-
+local rosterfilter = require 'rosterfilter'
 local gui = require 'rosterfilter.gui'
 
 local ROW_TEXT_SIZE = gui.font_size.small
@@ -13,16 +11,16 @@ local DEFAULT_COL_INFO = {{width=1}}
 
 
 local handlers = {
-    OnEnter = function()
-        this.mouseover = true
-        if not this.data then return end
-        if not this.st.highlightDisabled then
-            this.highlight:Show()
+    OnEnter = function(self)
+        self.mouseover = true
+        if not self.data then return end
+        if not self.st.highlightDisabled then
+            self.highlight:Show()
         end
 
-        local handler = this.st.handlers.OnEnter
+        local handler = self.st.handlers.OnEnter
         if handler then
-            handler(this.st, this.data, this)
+            handler(self.st, self.data, self)
         end
 
         local x,y = RosterFilterFrame:GetCenter();
@@ -33,9 +31,9 @@ local handlers = {
             anchor = 'ANCHOR_LEFT'
         end
 
-        GameTooltip:SetOwner(this, anchor)
-        for _,col in pairs(this.st.tooltipCols) do
-            local data = this.data.cols[col]
+        GameTooltip:SetOwner(self, anchor)
+        for _,col in pairs(self.st.tooltipCols) do
+            local data = self.data.cols[col]
             if data.value and data.value ~= '' then
                 GameTooltip:AddLine(data.name .. ": " .. data.value)
             end
@@ -43,55 +41,54 @@ local handlers = {
         GameTooltip:Show()
     end,
 
-    OnLeave = function()
-        this.mouseover = false
-        if not this.data then return end
-        if not (this.st.selected and this.st.selected(this.data)) then
-            this.highlight:Hide()
+    OnLeave = function(self)
+        self.mouseover = false
+        if not self.data then return end
+        if not (self.st.selected and self.st.selected(self.data)) then
+            self.highlight:Hide()
         end
 
-        local handler = this.st.handlers.OnLeave
+        local handler = self.st.handlers.OnLeave
         if handler then
-            handler(this.st, this.data, this)
+            handler(self.st, self.data, self)
         end
 
         GameTooltip:Hide()
     end,
 
-    OnClick = function()
-        if not this.data then return end
-        local handler = this.st.handlers.OnClick
+    OnClick = function(self, button)
+        if not self.data then return end
+        local handler = self.st.handlers.OnClick
         if handler then
-            handler(this.st, this.data, this, arg1)
+            handler(self.st, self.data, self, button)
         end
     end,
 
-	OnDoubleClick = function()
-		if not this.data then return end
+	OnDoubleClick = function(self, button)
+		if not self.data then return end
 
-		local handler = this.st.handlers.OnDoubleClick
+		local handler = self.st.handlers.OnDoubleClick
 		if handler then
-			handler(this.st, this.data, this, arg1)
+			handler(self.st, self.data, self, button)
 		end
     end
-    
+
 
 }
 
 local methods = {
 
-    OnHeadColumnClick = function()
-        local button = arg1
-        local st = this.st
+    OnHeadColumnClick = function(self, button)
+        local st = self.st
 
-        if st.sortColumn == this.colNum then
+        if st.sortColumn == self.colNum then
             st.sortInvert = not st.sortInvert
         else
             st.sortInvert = false
         end
 
-        st.sortColumn = this.colNum
-        st:SetSort(this.colNum)
+        st.sortColumn = self.colNum
+        st:SetSort(self.colNum)
         st:Update()
     end,
 
@@ -117,16 +114,16 @@ local methods = {
         end
         sort(self.rowData, sortFunc)
         self.isSorted = true
-    end,    
+    end,
 
     Update = function(self)
-	    if getn(self.colInfo) > 1 or self.colInfo[1].name then
+	    if #self.colInfo > 1 or self.colInfo[1].name then
 		    self.headHeight = HEAD_HEIGHT
 	    else
 		    self.headHeight = 0
 	    end
 
-	    if getn(self.rowData or empty) > self:GetNumRows() then
+	    if #(self.rowData or empty) > self:GetNumRows() then
 		    self.contentFrame:SetPoint('BOTTOMRIGHT', -15, 0)
 	    else
 		    self.contentFrame:SetPoint('BOTTOMRIGHT', 0, 0)
@@ -134,11 +131,11 @@ local methods = {
 
         local width = self.contentFrame:GetRight() - self.contentFrame:GetLeft()
 
-	    while getn(self.headCols) < getn(self.colInfo) do
+	    while #self.headCols < #self.colInfo do
 		    self:AddColumn()
 	    end
 
-	    for i, col in self.headCols do
+	    for i, col in ipairs(self.headCols) do
 		    if self.colInfo[i] then
 			    col:Show()
 			    col:SetWidth(self.colInfo[i].width * width)
@@ -151,12 +148,12 @@ local methods = {
                 local tex = col:GetNormalTexture()
                 tex:SetTexture[[Interface\AddOns\aux-AddOn\WorldStateFinalScore-Highlight]]
                 tex:SetTexCoord(.017, 1, .083, .909)
-                tex:SetAlpha(.5)                
+                tex:SetAlpha(.5)
 		    else
 			    col:Hide()
 		    end
         end
-        
+
         if self.isSorted and self.sortColumn < getn(self.headCols) then
             if self.sortInvert then
                 self.headCols[self.sortColumn]:GetNormalTexture():SetTexture(.8, .6, 1, .8)
@@ -169,7 +166,7 @@ local methods = {
 		    self:AddRow()
 	    end
 
-	    for i, row in self.rows do
+	    for i, row in ipairs(self.rows) do
 		    if i > self:GetNumRows() then
 			    row.data = nil
 			    row:Hide()
@@ -178,7 +175,7 @@ local methods = {
 			    while getn(row.cols) < getn(self.colInfo) do
 				    self:AddCell(i)
 			    end
-			    for j, col in row.cols do
+			    for j, col in ipairs(row.cols) do
 				    if self.headCols[j] and self.colInfo[j] then
 					    col:Show()
 					    col:SetWidth(self.colInfo[j].width * width)
@@ -189,7 +186,7 @@ local methods = {
 			    end
 		    end
 	    end
-	    
+
         if not self.rowData then return end
         FauxScrollFrame_Update(self.scrollFrame, getn(self.rowData), self:GetNumRows(), ROW_HEIGHT)
         local offset = FauxScrollFrame_GetOffset(self.scrollFrame)
@@ -211,7 +208,7 @@ local methods = {
                     self.rows[i].highlight:Hide()
                 end
 
-                for j, col in self.rows[i].cols do
+                for j, col in ipairs(self.rows[i].cols) do
                     if self.colInfo[j] then
                         local colData = data.cols[j]
                         if type(colData.value) == 'function' then
@@ -227,13 +224,7 @@ local methods = {
     end,
 
     SetData = function(self, rowData)
-	    for _, row in self.rowData or empty do
-		    for _, col in row.cols do release(col) end
-		    release(row.cols)
-		    release(row)
-	    end
         self.rowData = rowData
-
         self:SetSort(self.sortColumn)
         self:Update()
     end,
@@ -252,7 +243,7 @@ local methods = {
 	    local text = col:CreateFontString()
 	    text:SetAllPoints()
 	    text:SetFont(gui.font, 12)
-	    text:SetTextColor(color.label.enabled())
+	    text:SetTextColor(rosterfilter.color.label.enabled())
         col.text = text
 
         local tex = col:CreateTexture()
@@ -267,11 +258,11 @@ local methods = {
         tex:SetTexture([[Interface\Buttons\UI-Listbox-Highlight]])
         tex:SetTexCoord(.025, .957, .087, .931)
         tex:SetAlpha(.2)
-        col:SetHighlightTexture(tex)        
+        col:SetHighlightTexture(tex)
 
         tinsert(self.headCols, col)
-        
-        for i, row in self.rows do
+
+        for i, row in ipairs(self.rows) do
             while getn(row.cols) < getn(self.headCols) do
                 self:AddCell(i)
             end
@@ -303,7 +294,7 @@ local methods = {
         local row = CreateFrame('Button', nil, self.contentFrame)
         row:SetHeight(ROW_HEIGHT)
         row:RegisterForClicks('LeftButtonUp', 'RightButtonUp')
-        for name, func in handlers do
+        for name, func in pairs(handlers) do
 	        row:SetScript(name, func)
         end
         local rowNum = getn(self.rows) + 1
@@ -316,12 +307,12 @@ local methods = {
         end
         local highlight = row:CreateTexture()
         highlight:SetAllPoints()
-        highlight:SetTexture(1, .9, 0, .4)
+        highlight:SetColorTexture(1, .9, 0, .4)
         highlight:Hide()
         row.highlight = highlight
         row.st = self
 
-        row.cols = T
+        row.cols = {}
         self.rows[rowNum] = row
         for _ = 1, getn(self.colInfo) do
             self:AddCell(rowNum)
@@ -348,7 +339,7 @@ local methods = {
 }
 
 function M.new(parent)
-    local st = CreateFrame('Frame', gui.unique_name, parent)
+    local st = CreateFrame('Frame', gui.unique_name(), parent)
     st:SetAllPoints()
 
     st.numRows = max(floor((parent:GetHeight() - HEAD_HEIGHT - HEAD_SPACE) / ROW_HEIGHT), 0)
@@ -358,8 +349,8 @@ function M.new(parent)
     st.contentFrame = contentFrame
 
     local scrollFrame = CreateFrame('ScrollFrame', st:GetName() .. 'ScrollFrame', st, 'FauxScrollFrameTemplate')
-    scrollFrame:SetScript('OnVerticalScroll', function()
-        FauxScrollFrame_OnVerticalScroll(ROW_HEIGHT, function() st:Update() end)
+    scrollFrame:SetScript('OnVerticalScroll', function(self, offset)
+        FauxScrollFrame_OnVerticalScroll(self, offset, ROW_HEIGHT, function() st:Update() end)
     end)
     scrollFrame:SetAllPoints(contentFrame)
     st.scrollFrame = scrollFrame
@@ -371,19 +362,19 @@ function M.new(parent)
     scroll_bar:SetWidth(10)
     local thumbTex = scroll_bar:GetThumbTexture()
     thumbTex:SetPoint('CENTER', 0, 0)
-    thumbTex:SetTexture(color.content.background())
+    thumbTex:SetTexture(rosterfilter.color.content.background())
     thumbTex:SetHeight(150)
     thumbTex:SetWidth(scroll_bar:GetWidth())
     _G[scroll_bar:GetName() .. 'ScrollUpButton']:Hide()
     _G[scroll_bar:GetName() .. 'ScrollDownButton']:Hide()
 
-    for name, func in methods do
+    for name, func in pairs(methods) do
         st[name] = func
     end
-    
-    st.headCols = T
-    st.rows = T
-    st.handlers = T
+
+    st.headCols = {}
+    st.rows = {}
+    st.handlers = {}
     st.colInfo = DEFAULT_COL_INFO
     st.sorts = {}
 

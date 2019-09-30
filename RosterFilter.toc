@@ -1,13 +1,11 @@
-## Interface: 11200
+## Interface: 11302
 ## Title: RosterFilter
 ## Author: Starhammer
-## Notes: 
+## Notes:
 ## Version: 1.0
 ## SavedVariables: rf_scale
 
-libs\inspect.lua
-libs\module.lua
-libs\T.lua
+libs\package.lua
 
 locale\core.lua
 locale\class.lua

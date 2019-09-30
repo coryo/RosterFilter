@@ -1,5 +1,6 @@
-module 'rosterfilter.locale.class'
+select(2, ...) 'rosterfilter.locale.class'
 
+local rosterfilter = require 'rosterfilter'
 local locale = require 'rosterfilter.locale'
 
 
@@ -27,7 +28,7 @@ locale.RegisterTranslations("deDE", function()
 		["Druid"] = "Druide",
 		["Paladin"] = "Paladin",
 		["Shaman"] = "Schamane",
-		["Rogue"] = "Schurke",   
+		["Rogue"] = "Schurke",
 	}
 end)
 
@@ -55,7 +56,7 @@ locale.RegisterTranslations("zhCN", function()
 		["Druid"] = "德鲁伊",
 		["Paladin"] = "圣骑士",
 		["Shaman"] = "萨满祭祀",
-		["Rogue"] = "盗贼",      
+		["Rogue"] = "盗贼",
 	}
 end)
 
@@ -69,7 +70,7 @@ locale.RegisterTranslations("koKR", function()
 		["Druid"] = "드루이드",
 		["Paladin"] = "성기사",
 		["Shaman"] = "주술사",
-		["Rogue"] = "도적",      
+		["Rogue"] = "도적",
 	}
 end)
 
