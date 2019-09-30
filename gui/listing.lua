@@ -146,7 +146,7 @@ local methods = {
                 col:SetScript('OnClick', self.OnHeadColumnClick)
 
                 local tex = col:GetNormalTexture()
-                tex:SetTexture[[Interface\AddOns\aux-AddOn\WorldStateFinalScore-Highlight]]
+                tex:SetTexture[[Interface\AddOns\RosterFilter\WorldStateFinalScore-Highlight]]
                 tex:SetTexCoord(.017, 1, .083, .909)
                 tex:SetAlpha(.5)
 		    else
@@ -156,9 +156,9 @@ local methods = {
 
         if self.isSorted and self.sortColumn < getn(self.headCols) then
             if self.sortInvert then
-                self.headCols[self.sortColumn]:GetNormalTexture():SetTexture(.8, .6, 1, .8)
+                self.headCols[self.sortColumn]:GetNormalTexture():SetColorTexture(.8, .6, 1, .8)
             else
-                self.headCols[self.sortColumn]:GetNormalTexture():SetTexture(.6, .8, 1, .8)
+                self.headCols[self.sortColumn]:GetNormalTexture():SetColorTexture(.6, .8, 1, .8)
             end
         end
 
@@ -248,7 +248,7 @@ local methods = {
 
         local tex = col:CreateTexture()
         tex:SetAllPoints()
-        tex:SetTexture([[Interface\AddOns\aux-AddOn\WorldStateFinalScore-Highlight]])
+        tex:SetTexture([[Interface\AddOns\RosterFilter\WorldStateFinalScore-Highlight]])
         tex:SetTexCoord(.017, 1, .083, .909)
         tex:SetAlpha(.5)
         col:SetNormalTexture(tex)
@@ -334,7 +334,7 @@ local methods = {
     end,
 
     GetNumRows = function(self)
-        return max(floor((self:GetParent():GetHeight()) / ROW_HEIGHT), 0)
+        return max(floor((self:GetHeight() - (HEAD_SPACE + HEAD_HEIGHT)) / ROW_HEIGHT), 0)
     end
 }
 
@@ -362,7 +362,7 @@ function M.new(parent)
     scroll_bar:SetWidth(10)
     local thumbTex = scroll_bar:GetThumbTexture()
     thumbTex:SetPoint('CENTER', 0, 0)
-    thumbTex:SetTexture(rosterfilter.color.content.background())
+    thumbTex:SetColorTexture(rosterfilter.color.content.background())
     thumbTex:SetHeight(150)
     thumbTex:SetWidth(scroll_bar:GetWidth())
     _G[scroll_bar:GetName() .. 'ScrollUpButton']:Hide()
