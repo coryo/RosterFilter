@@ -66,19 +66,13 @@ player_listing:SetHandler('OnClick', function(table, row_data, column, button)
     if button == 'RightButton' then
         gui.menu(
             'Whisper', function()
-                if (ChatFrameEditBox:IsVisible()) then
-                    ChatEdit_OnEscapePressed(ChatFrameEditBox);
+                if (DEFAULT_CHAT_FRAME.editBox:IsVisible()) then
+                    ChatEdit_OnEscapePressed(DEFAULT_CHAT_FRAME.editBox);
                 end
-                ChatFrameEditBox:SetText('/w '..friend.name);
+                DEFAULT_CHAT_FRAME.editBox:Show()
+                DEFAULT_CHAT_FRAME.editBox:SetText('/w '..friend.name .. " ");
             end,
-            'Invite', function () InviteByName(friend.name) end,
-            'Target', function ()
-                if (ChatFrameEditBox:IsVisible()) then
-                    ChatEdit_OnEscapePressed(ChatFrameEditBox);
-                end
-                ChatFrameEditBox:SetText('/tar '..friend.name);
-                ChatEdit_SendText(ChatFrameEditBox);
-            end,
+            'Invite', function () InviteUnit(friend.name) end,
             'Remove Friend', function () RemoveFriend(friend.name) end,
             'Cancel', function () return; end
         )
