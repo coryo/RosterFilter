@@ -76,7 +76,7 @@ do
         gui.set_size(button2, 50, 25)
         button2:SetScript('OnClick', function()
             editbox:SetText('online');
-            editbox:SetFocus();
+            editbox:ClearFocus();
             refresh=true;
         end)
     end
