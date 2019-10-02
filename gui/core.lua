@@ -43,7 +43,7 @@ do
 				end
 			end
 		end, 'MENU')
-		ToggleDropDownMenu(1, nil, menu, 'cursor', 0, 2*menu:GetHeight())
+		ToggleDropDownMenu(1, nil, menu, 'cursor', 0, 0)
 	end
 end
 
