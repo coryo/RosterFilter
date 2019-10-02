@@ -31,7 +31,8 @@ do
 						UIDropDownMenu_AddButton({
 							['text'] = arg[i],
 							['notCheckable'] = true,
-							['func'] = arg[i + 1][1], 'arg1', arg[i+1][2]
+							['func'] = arg[i + 1][1],
+							['arg1'] = arg[i+1][2]
 						})
 					else
 						UIDropDownMenu_AddButton({

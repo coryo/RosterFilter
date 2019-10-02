@@ -25,6 +25,8 @@ function tab.OPEN()
 
     if not CanEditMOTD() then
         motd_edit_button:Disable()
+    else
+        motd_edit_button:Enable()
     end
 
     motd_label:SetText(GetGuildRosterMOTD())

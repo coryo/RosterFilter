@@ -146,38 +146,41 @@ player_listing:SetHandler('OnClick', function(table, row_data, column, button)
         end
     end
 
-    local ranks = {}
-    local _, _, player_rank, realm = GetGuildInfo("player")
-    if CanGuildPromote() and member.rank_index > player_rank then
-        for i = player_rank + 1, member.rank_index do
-            ranks[i] = true
-        end
-    end
-    if CanGuildDemote() and member.rank_index > player_rank then
-        for i = member.rank_index + 1, 9 do
-            ranks[i] = true
-        end
-    end
+    -- local ranks = {}
+    -- local _, _, player_rank, realm = GetGuildInfo("player")
+    -- if CanGuildPromote() and member.rank_index > player_rank then
+    --     for i = player_rank + 1, member.rank_index do
+    --         ranks[i] = true
+    --     end
+    -- end
+    -- if CanGuildDemote() and member.rank_index > player_rank then
+    --     for i = member.rank_index + 1, 9 do
+    --         ranks[i] = true
+    --     end
+    -- end
 
-    local options = {}
-    for rank in pairs(ranks) do
-        if rank ~=  member.rank_index then
-            tinsert(options, "- set " .. index_to_rank(rank))
-            tinsert(options, {
-                function(arg1)
-                    local cur_rank = member.rank_index;
-                    local target_rank = arg1;
-                    print(member.name, index_to_rank(cur_rank), ">", index_to_rank(target_rank));
-                    if cur_rank == target_rank then
-                        return
-                    else
-                        SetGuildMemberRank(member.index, target_rank);
-                    end
-                end,
-                rank
-            })
-        end
-    end
+    -- local options = {}
+    -- for rank in pairs(ranks) do
+    --     if rank ~=  member.rank_index then
+    --         local rank_name = index_to_rank(rank)
+    --         if rank_name then
+    --             tinsert(options, "- set " .. index_to_rank(rank))
+    --         end
+    --         tinsert(options, {
+    --             function(self, arg1, arg2, checked)
+    --                 local cur_rank = member.rank_index;
+    --                 local target_rank = arg1;
+    --                 print(member.name, index_to_rank(cur_rank), ">", index_to_rank(target_rank));
+    --                 if cur_rank == target_rank then
+    --                     return
+    --                 else
+    --                     -- SetGuildMemberRank(member.index, target_rank);
+    --                 end
+    --             end,
+    --             rank
+    --         })
+    --     end
+    -- end
 
 
     if button == 'RightButton' then
@@ -192,8 +195,8 @@ player_listing:SetHandler('OnClick', function(table, row_data, column, button)
             'Invite', function () InviteUnit(member.name) end,
             edit_note, edit_note_func,
             edit_onote, edit_onote_func,
-            'Cancel', function () return; end,
-            unpack(options)
+            'Cancel', function () return; end
+            -- unpack(options)
         )
     end
 end)
