@@ -274,7 +274,7 @@ function M.UpdateRoster()
                 ['rank_index'] = rank_index,
                 ['level'] = level,
                 ['class'] = class,
-                ['zone'] = zone,
+                ['zone'] = zone or 'unknown',
                 ['note'] = note,
                 ['officer_note'] = officer_note,
                 ['online'] = online,
