@@ -72,7 +72,7 @@ function M.set_content_style(frame, left, right, top, bottom)
 end
 
 function M.panel(parent)
-    local panel = CreateFrame('Frame', nil, parent)
+    local panel = CreateFrame('Frame', nil, parent, BackdropTemplateMixin and "BackdropTemplate")
     set_panel_style(panel)
     return panel
 end
@@ -80,13 +80,13 @@ end
 function M.checkbutton(parent, text_height)
     local button = button(parent, text_height)
     button.state = false
-    button:SetBackdropColor(rosterfilter.color.state.disabled())
+    -- button:SetBackdropColor(rosterfilter.color.state.disabled())
     function button:SetChecked(state)
         if state then
-            self:SetBackdropColor(rosterfilter.color.state.enabled())
+            -- self:SetBackdropColor(rosterfilter.color.state.enabled())
             self.state = true
         else
-            self:SetBackdropColor(rosterfilter.color.state.disabled())
+            -- self:SetBackdropColor(rosterfilter.color.state.disabled())
             self.state = false
         end
     end
@@ -136,7 +136,7 @@ end
 
 function M.button(parent, text_height)
     text_height = text_height or font_size.large
-    local button = CreateFrame('Button', nil, parent)
+    local button = CreateFrame('Button', nil, parent, BackdropTemplateMixin and "BackdropTemplate")
     set_size(button, 80, 24)
     set_content_style(button)
     local highlight = button:CreateTexture(nil, 'HIGHLIGHT')
@@ -173,7 +173,7 @@ do
 	function mt.__index:create_tab(text)
 		local id = getn(self._tabs) + 1
 
-		local tab = CreateFrame('Button', unique_name(), self._frame)
+		local tab = CreateFrame('Button', unique_name(), self._frame, BackdropTemplateMixin and "BackdropTemplate")
 		tab.id = id
 		tab.group = self
 		tab:SetHeight(24)
@@ -238,13 +238,13 @@ do
 			if tab.group._selected == tab.id then
 				tab.text:SetTextColor(rosterfilter.color.label.enabled())
 				tab:Disable()
-				tab:SetBackdropColor(rosterfilter.color.panel.background())
+				-- tab:SetBackdropColor(rosterfilter.color.panel.background())
 				tab.dock:Show()
 				tab:SetHeight(29)
 			else
 				tab.text:SetTextColor(rosterfilter.color.text.enabled())
 				tab:Enable()
-				tab:SetBackdropColor(rosterfilter.color.content.background())
+				-- tab:SetBackdropColor(rosterfilter.color.content.background())
 				tab.dock:Hide()
 				tab:SetHeight(24)
 			end
@@ -261,7 +261,7 @@ do
 end
 
 function M.editbox(parent)
-    local editbox = CreateFrame('EditBox', nil, parent)
+    local editbox = CreateFrame('EditBox', nil, parent, BackdropTemplateMixin and "BackdropTemplate")
     editbox:SetAutoFocus(false)
     editbox:SetTextInsets(1.5, 1.5, 3, 3)
     editbox:SetMaxLetters(nil)
@@ -451,7 +451,7 @@ function M.vertical_line(parent, x_offset, top_offset, bottom_offset, inverted_c
 end
 
 function M.dropdown(parent)
-    local dropdown = CreateFrame('Frame', unique_name(), parent, 'UIDropDownMenuTemplate')
+    local dropdown = CreateFrame('Frame', unique_name(), parent, BackdropTemplateMixin and "BackdropTemplate" and 'UIDropDownMenuTemplate')
 	set_content_style(dropdown, 0, 0, 4, 4)
 
     _G[dropdown:GetName() .. 'Left']:Hide()
@@ -476,7 +476,7 @@ end
 
 function M.slider(parent)
 
-    local slider = CreateFrame('Slider', nil, parent)
+    local slider = CreateFrame('Slider', nil, parent, BackdropTemplateMixin and "BackdropTemplate")
     slider:SetOrientation('HORIZONTAL')
     slider:SetHeight(6)
     slider:SetHitRectInsets(0, 0, -12, -12)
@@ -511,7 +511,7 @@ function M.slider(parent)
 end
 
 function M.checkbox(parent)
-    local checkbox = CreateFrame('CheckButton', nil, parent, 'UICheckButtonTemplate')
+    local checkbox = CreateFrame('CheckButton', nil, parent, BackdropTemplateMixin and "BackdropTemplate" and 'UICheckButtonTemplate')
     checkbox:SetWidth(16)
     checkbox:SetHeight(16)
 	set_content_style(checkbox)

@@ -10,7 +10,7 @@ function handle.LOAD()
 end
 
 do
-    local frame = CreateFrame('Frame', 'RosterFilterFrame', UIParent)
+    local frame = CreateFrame('Frame', 'RosterFilterFrame', UIParent, BackdropTemplateMixin and "BackdropTemplate")
     gui.set_window_style(frame)
     gui.set_size(frame, 750, 400)
     frame:SetPoint('LEFT', 750, 0)
