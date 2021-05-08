@@ -80,13 +80,13 @@ end
 function M.checkbutton(parent, text_height)
     local button = button(parent, text_height)
     button.state = false
-    -- button:SetBackdropColor(rosterfilter.color.state.disabled())
+    button:SetBackdropColor(rosterfilter.color.state.disabled())
     function button:SetChecked(state)
         if state then
-            -- self:SetBackdropColor(rosterfilter.color.state.enabled())
+            self:SetBackdropColor(rosterfilter.color.state.enabled())
             self.state = true
         else
-            -- self:SetBackdropColor(rosterfilter.color.state.disabled())
+            self:SetBackdropColor(rosterfilter.color.state.disabled())
             self.state = false
         end
     end
@@ -238,13 +238,13 @@ do
 			if tab.group._selected == tab.id then
 				tab.text:SetTextColor(rosterfilter.color.label.enabled())
 				tab:Disable()
-				-- tab:SetBackdropColor(rosterfilter.color.panel.background())
+				tab:SetBackdropColor(rosterfilter.color.panel.background())
 				tab.dock:Show()
 				tab:SetHeight(29)
 			else
 				tab.text:SetTextColor(rosterfilter.color.text.enabled())
 				tab:Enable()
-				-- tab:SetBackdropColor(rosterfilter.color.content.background())
+				tab:SetBackdropColor(rosterfilter.color.content.background())
 				tab.dock:Hide()
 				tab:SetHeight(24)
 			end
