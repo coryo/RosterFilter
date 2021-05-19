@@ -1,7 +1,7 @@
-## Interface: 11302
+## Interface: 20501
 ## Title: RosterFilter
 ## Author: Starhammer
-## Notes:
+## Notes: A guild frame replacement.
 ## Version: 1.0
 ## SavedVariables: rf_scale
 
