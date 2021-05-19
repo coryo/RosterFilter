@@ -11,6 +11,9 @@ function M.IsCity(zone)
         or zone == locale.L["Orgrimmar"]
         or zone == locale.L["Thunder Bluff"]
         or zone == locale.L["Undercity"]
+		or zone == locale.L["The Exodar"]
+		or zone == locale.L["Silvermoon City"]
+		or zone == locale.L["Shattrath"]
 end
 
 
@@ -18,6 +21,7 @@ function M.IsBattleground(zone)
     return zone == locale.L["Warsong Gulch"]
         or zone == locale.L["Arathi Basin"]
         or zone == locale.L["Alterac Valley"]
+		or zone == locale.L["Eye of the Storm"]
 end
 
 
@@ -49,6 +53,35 @@ function M.IsDungeon(zone)
         or zone == locale.L["Wailing Caverns"]
         or zone == locale.L["Zul'Farrak"]
         or zone == locale.L["Zul'Gurub"]
+
+		--tbc
+		or zone == locale.L["Hellfire Ramparts"]
+		or zone == locale.L["The Blood Furnace"]
+		or zone == locale.L["The Slave Pens"]
+		or zone == locale.L["The Underbog"]
+		or zone == locale.L["Mana-Tombs"]
+		or zone == locale.L["Auchenai Crypts"]
+		or zone == locale.L["Old Hillsbrad Foothills"]
+		or zone == locale.L["Sethekk Halls"]
+		or zone == locale.L["The Black Morass"]
+		or zone == locale.L["The Mechanar"]
+		or zone == locale.L["Magisters' Terrace"]
+		or zone == locale.L["Shadow Labyrinth"]
+		or zone == locale.L["The Arcatraz"]
+		or zone == locale.L["The Botanica"]
+		or zone == locale.L["The Shattered Halls"]
+		or zone == locale.L["The Steamvault"]
+
+		or zone == locale.L["Karazhan"]
+		or zone == locale.L["Gruul's Lair"]
+		or zone == locale.L["Magtheridon's Lair"]
+		or zone == locale.L["Serpentshrine Cavern"]
+		or zone == locale.L["Tempest Keep"]
+		or zone == locale.L["Hyjal Summit"]
+		or zone == locale.L["Black Temple"]
+		or zone == locale.L["Sunwell Plateau"]
+
+
 end
 
 
@@ -150,6 +183,52 @@ locale.RegisterTranslations("enUS", function()
 		["Winterspring"] = true,
 		["Zul'Farrak"] = true,
 		["Zul'Gurub"] = true,
+
+		-- tbc
+		["Hellfire Peninsula"] = true,
+		["Zangarmarsh"] = true,
+		["Terokkar Forest"] = true,
+		["Nagrand"] = true,
+		["Blade's Edge Mountains"] = true,
+		["Netherstorm"] = true,
+		["Shadowmoon Valley"] = true,
+		["Shattrath"] = true,
+
+		["Isle of Quel'Danas"] = true,
+		["Azuremyst Isle"] = true,
+		["Eversong Woods"] = true,
+		["Bloodmyst Isle"] = true,
+		["Ghostlands"] = true,
+		["The Exodar"] = true,
+		["Silvermoon City"] = true,
+
+		["Eye of the Storm"] = true,
+
+		["Hellfire Ramparts"] = true,
+		["The Blood Furnace"] = true,
+		["The Slave Pens"] = true,
+		["The Underbog"] = true,
+		["Mana-Tombs"] = true,
+		["The Shattered Halls"] = true,
+		["The Black Morass"] = true,
+		["The Steamvault"] = true,
+		["Sethekk Halls"] = true,
+		["Shadow Labyrinth"] = true,
+		["The Mechanar"] = true,
+		["Auchenai Crypts"] = true,
+		["Old Hillsbrad Foothills"] = true,
+		["The Arcatraz"] = true,
+		["The Botanica"] = true,
+		["Sunwell Plateau"] = true,
+		["Magisters' Terrace"] = true,
+
+		["Karazhan"] = true,
+		["Gruul's Lair"] = true,
+		["Magtheridon's Lair"] = true,
+		["Serpentshrine Cavern"] = true,
+		["Tempest Keep"] = true,
+		["Hyjal Summit"] = true,
+		["Black Temple"] = true,
 	}
 end)
 
