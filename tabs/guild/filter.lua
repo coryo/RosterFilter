@@ -29,7 +29,7 @@ M.filters = {
         validator = function(str)
             return function(member)
                 local qry = strlower(str)
-                local search = strlower(member.name..member.level..member.rank..member.zone..member.note..member.officer_note)
+                local search = strlower(member.name..member.level..member.class..member.rank..member.zone..member.note..member.officer_note)
                 return string.find(search, qry)
             end
         end
