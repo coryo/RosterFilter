@@ -1,7 +1,6 @@
 select(2, ...) 'rosterfilter'
 
 
-_G.rf_scale = 1
 _G.BINDING_HEADER_RF_HEADER = "RosterFilter";
 _G.BINDING_NAME_TOGGLE_RF = "Toggle Window";
 
@@ -58,7 +57,7 @@ end
 
 
 function handle.LOAD2()
-	RosterFilterFrame:SetScale(rf_scale)
+
 end
 
 

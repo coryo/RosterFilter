@@ -1,12 +1,16 @@
 select(2, ...) 'rosterfilter'
 
 local gui = require 'rosterfilter.gui'
+local rosterfilter = require 'rosterfilter'
 
 
 function handle.LOAD()
 	for _, v in ipairs(tab_info) do
 		tabs:create_tab(v.name)
 	end
+	rosterfilter.RegisterKeyChangedCallback("scale", function(value)
+		RosterFilterFrame:SetScale(value)
+	end)
 end
 
 do

@@ -1,9 +1,7 @@
 select(2, ...) 'rosterfilter.tabs.guild'
 
 local rosterfilter = require 'rosterfilter'
-local locale = require 'rosterfilter.locale'
-local zones = require 'rosterfilter.locale.zone'
-local L = locale.L
+local zones = require 'rosterfilter.zones'
 
 
 local member_cache = {}
@@ -115,20 +113,20 @@ M.filters = {
         input_type = 'string',
         validator = function(role)
             return function(member)
-                local cls = member.class;
+                local cls = member.classFile;
                 local role = strlower(role);
                 if role == 'heal' or role == 'healer' then
-                    return cls == L['Priest'] or cls == L['Paladin'] or cls == L['Druid'] or cls == L['Shaman'];
+                    return cls == 'PRIEST' or cls == 'PALADIN' or cls == 'DRUID' or cls == 'SHAMAN';
                 elseif role == 'dps' then
-                    return cls == L['Rogue'] or cls == L['Warrior'] or cls == L['Mage'] or cls == L['Warlock'] or cls==L['Hunter'];
+                    return cls == 'ROGUE' or cls == 'WARRIOR' or cls == 'MAGE' or cls == 'WARLOCK' or cls=='HUNTER' or cls == 'DEATHKNIGHT';
                 elseif role == 'caster' then
-                    return cls == L['Mage'] or cls == L['Warlock'] or cls == L['Shaman'] or cls == L['Druid'];
+                    return cls == 'MAGE' or cls == 'WARLOCK' or cls == 'SHAMAN' or cls == 'DRUID';
                 elseif role == 'tank' then
-                    return cls == L['Warrior'] or cls == L['Druid'] or cls == L['Paladin'];
+                    return cls == 'WARRIOR' or cls == 'DRUID' or cls == 'PALADIN' or cls == 'DEATHKNIGHT';
                 elseif role == 'melee' then
-                    return cls == L['Warrior'] or cls == L['Rogue'] or cls == L['Paladin'] or cls == L['Druid'];
+                    return cls == 'WARRIOR' or cls == 'ROGUE' or cls == 'PALADIN' or cls == 'DRUID' or cls == 'DEATHKNIGHT';
                 elseif role == 'ranged' then
-                    return cls ==L['Mage'] or cls == L['Hunter'] or cls==L['Warlock'];
+                    return cls =='MAGE' or cls == 'HUNTER' or cls=='WARLOCK';
                 end
                 return false
             end
@@ -209,8 +207,6 @@ function M.Query(str)
     for _,index in pairs(working_set) do
         local member = member_cache[index]
 
-        local class_color = rosterfilter.color.class[strlower(member.class)]
-
         local info_text;
         local alpha = 1.0;
         if not member.online then
@@ -225,20 +221,22 @@ function M.Query(str)
         end
 
         local zone_color;
-        if zones.IsBattleground(member.zone) then
+        if zones.IsBattleground(member.mapID) then
             zone_color = rosterfilter.color.red
-        elseif zones.IsDungeon(member.zone) then
+        elseif member.zone == "Naxxramas" or zones.IsRaid(member.mapID) then
             zone_color = rosterfilter.color.blue
-        elseif zones.IsCity(member.zone) then
+        elseif member.zone == "Magisters' Terrace" or zones.IsDungeon(member.mapID) then
+            zone_color = rosterfilter.color.lightblue
+        elseif zones.IsCity(member.mapID) then
             zone_color = rosterfilter.color.green
         else
             zone_color = rosterfilter.color.text.enabled
         end
-        local num_ranks = table.getn(rank_cache)
+        -- local num_ranks = table.getn(rank_cache)
         tinsert(rows, {
             ['cols'] = {
                 {['name'] = 'class', ['value'] = '', ['sort'] = member.class},
-                {['name'] = 'name', ['value'] = class_color(member.name), ['sort'] = member.name},
+                {['name'] = 'name', ['value'] = RAID_CLASS_COLORS[member.classFile]:WrapTextInColorCode(member.name), ['sort'] = member.name},
                 {['name'] = 'level', ['value'] = member.level, ['sort'] = tonumber(member.level)},
                 {['name'] = 'rank', ['value'] = member.rank, ['sort'] = member.rank_index},
                 -- {['name'] = '', ['value'] = format('%s (%d)', member.rank, num_ranks - member.rank_index + 1), ['sort'] = member.rank_index},
@@ -269,12 +267,14 @@ function M.UpdateRoster()
 
         if name then
             local member = {
-                ['name'] = rosterfilter.split(name, '-')[1],
+                ['name'] = Ambiguate(name, "none"),
                 ['rank'] = rank,
                 ['rank_index'] = rank_index,
                 ['level'] = level,
                 ['class'] = class,
+                ['classFile'] = classFileName,
                 ['zone'] = zone or 'unknown',
+                ['mapID'] = map_cache[zone] or 0,
                 ['note'] = note,
                 ['officer_note'] = officer_note,
                 ['online'] = online,

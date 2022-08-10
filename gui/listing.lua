@@ -115,6 +115,20 @@ local methods = {
         sort(self.rowData, sortFunc)
         self.isSorted = true
     end,
+    -- {name='C', width=10, align='LEFT', fixed=true},
+    -- {name='Name', width=.20, align='LEFT'},
+    -- {name='L', width=15, align='CENTER', fixed=true},
+    -- {name='Rank', width=.20, align='RIGHT'},
+    -- {name='Zone', width=.20, align='CENTER'},
+    -- {name='Note', width=.35, align='RIGHT'},
+    GetWidthFromColInfo = function(self, colInfo)
+        local width = self.contentFrame:GetRight() - self.contentFrame:GetLeft()
+        local total_fixed_width = 0;
+        for _,col in pairs(colInfo) do
+            if col.fixed == true then total_fixed_width = total_fixed_width + col.width end
+        end
+        return width - total_fixed_width;
+    end,
 
     Update = function(self)
 	    if #self.colInfo > 1 or self.colInfo[1].name then
@@ -130,6 +144,7 @@ local methods = {
 	    end
 
         local width = self.contentFrame:GetRight() - self.contentFrame:GetLeft()
+        local dynamic_width = self:GetWidthFromColInfo(self.colInfo)
 
 	    while #self.headCols < #self.colInfo do
 		    self:AddColumn()
@@ -138,7 +153,11 @@ local methods = {
 	    for i, col in ipairs(self.headCols) do
 		    if self.colInfo[i] then
 			    col:Show()
-			    col:SetWidth(self.colInfo[i].width * width)
+                if self.colInfo[i].fixed then
+                    col:SetWidth(self.colInfo[i].width)
+                else
+			        col:SetWidth(self.colInfo[i].width * dynamic_width)
+                end
 			    col:SetHeight(self.headHeight)
 			    col.text:SetText(self.colInfo[i].name or '')
 			    col.text:SetJustifyH(self.colInfo[i].headAlign or 'CENTER')
@@ -178,7 +197,11 @@ local methods = {
 			    for j, col in ipairs(row.cols) do
 				    if self.headCols[j] and self.colInfo[j] then
 					    col:Show()
-					    col:SetWidth(self.colInfo[j].width * width)
+                        if self.colInfo[j].fixed then
+                            col:SetWidth(self.colInfo[j].width)
+                        else
+					        col:SetWidth(self.colInfo[j].width * dynamic_width)
+                        end
 					    col.text:SetJustifyH(self.colInfo[j].align or 'LEFT')
 				    else
 					    col:Hide()

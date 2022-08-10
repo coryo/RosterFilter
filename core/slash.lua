@@ -14,8 +14,7 @@ function SlashCmdList.ROSTERFILTER(command)
 	local arguments = rosterfilter.tokenize(command)
     if arguments[1] == 'scale' and tonumber(arguments[2]) then
     	local scale = tonumber(arguments[2])
-	    RosterFilterFrame:SetScale(scale)
-	    _G.rf_scale = scale
+        rosterfilter.SetConfig('scale', scale)
     else
         GuildRoster();
         RosterFilterFrame:Show()

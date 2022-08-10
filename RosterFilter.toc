@@ -1,20 +1,19 @@
-## Interface: 20501
+## Interface: 20504
 ## Title: RosterFilter
 ## Author: Starhammer
 ## Notes: A guild frame replacement.
-## Version: 1.0
-## SavedVariables: rf_scale
+## Version: 2.3
+## SavedVariables: RosterFilterOptions
 
 libs\package.lua
 
-locale\core.lua
-locale\class.lua
-locale\zone.lua
-
 RosterFilter.lua
+
+options.lua
 util.lua
 control.lua
 color.lua
+zones.lua
 gui\core.lua
 frame.lua
 

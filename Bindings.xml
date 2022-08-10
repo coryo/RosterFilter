@@ -1,3 +1,3 @@
 <Bindings>
-	<Binding name="TOGGLE_RF" header="RF_HEADER">RosterFilter_ToggleWindow();</Binding>
+	<Binding name="TOGGLE_RF" category="BINDING_HEADER_RF_HEADER">RosterFilter_ToggleWindow();</Binding>
 </Bindings>

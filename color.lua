@@ -39,6 +39,7 @@ M.color = rosterfilter.immutable-{
 		}
 	},
 
+	lightblue = C(105, 176, 255, 1),
 	blue = C(41, 146, 255, 1),
 	green = C(22, 255, 22, 1),
 	yellow = C(255, 255, 0, 1),
@@ -48,16 +49,4 @@ M.color = rosterfilter.immutable-{
 	gold = C(255, 255, 154, 1),
 
 	blizzard = C(0, 180, 255, 1),
-
-	class = rosterfilter.immutable-{
-		druid = C(255, 125, 10, 1),
-		hunter = C(171, 212, 115, 1),
-		mage = C(105, 204, 240, 1),
-		paladin = C(245, 140, 186, 1),
-		priest = C(255, 255, 255, 1),
-		rogue = C(255, 245, 105, 1),
-		shaman = C(0, 112, 222, 1),
-		warlock = C(148, 130, 201, 1),
-		warrior = C(199, 156, 110, 1)
-	}
 }

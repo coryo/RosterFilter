@@ -116,14 +116,19 @@ end)
 
 player_listing:SetHandler('OnClick', function(table, row_data, column, button)
     local member = row_data.record
-    print(member.name, 'Level', member.level, member.class, '-', member.zone)
+    rosterfilter.print(member.name, '-', 'Level', member.level, member.class, '-', member.zone)
+
+    if IsShiftKeyDown() and ChatFrame1EditBox:IsVisible() then
+        local text = ChatFrame1EditBox:GetText()
+        ChatFrame1EditBox:SetText(text..member.name)
+    end
 
     if member.note ~= '' then
-        print('Note:', member.note)
+        rosterfilter.print('  Note:', member.note)
     end
 
     if CanViewOfficerNote() and member.officer_note ~= '' then
-        print('ONote:', member.officer_note)
+        rosterfilter.print('  ONote:', member.officer_note)
     end
 
     local edit_note = nil
@@ -195,6 +200,13 @@ player_listing:SetHandler('OnClick', function(table, row_data, column, button)
             'Invite', function () InviteUnit(member.name) end,
             edit_note, edit_note_func,
             edit_onote, edit_onote_func,
+            'Copy Name', function ()
+                local data = {}
+                data.text = 'CTRL-C to copy'
+                data.text2 = member.name
+                data.callback = function() return end
+                StaticPopup_Show('GENERIC_INPUT_BOX', nil, nil, data, nil)
+            end,
             'Cancel', function () return; end
             -- unpack(options)
         )
