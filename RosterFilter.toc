@@ -1,8 +1,8 @@
-## Interface: 20504
+## Interface: 11505
 ## Title: RosterFilter
 ## Author: Starhammer
 ## Notes: A guild frame replacement.
-## Version: 2.3
+## Version: 2.4
 ## SavedVariables: RosterFilterOptions
 
 libs\package.lua
