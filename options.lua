@@ -43,7 +43,9 @@ M.SetConfig = SetConfig
 
 local f = CreateFrame("Frame", nil, UIParent)
 f.name = "RosterFilter"
-InterfaceOptions_AddCategory(f)
+local category = Settings.RegisterCanvasLayoutCategory(f, f.name)
+Settings.RegisterAddOnCategory(category)
+-- InterfaceOptions_AddCategory(f)
 
 do
     local t = f:CreateFontString(nil, "ARTWORK", "GameFontNormalLarge")

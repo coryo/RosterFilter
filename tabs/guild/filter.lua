@@ -267,7 +267,8 @@ function M.UpdateRoster()
 
         if name then
             local member = {
-                ['name'] = Ambiguate(name, "none"),
+                ['name'] = Ambiguate(name, "short"),
+                ['fullName'] = name,
                 ['rank'] = rank,
                 ['rank_index'] = rank_index,
                 ['level'] = level,

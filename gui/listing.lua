@@ -299,7 +299,7 @@ local methods = {
         local text = cell:CreateFontString()
         cell.text = text
         text:SetFont(gui.font, ROW_TEXT_SIZE)
-        text:SetJustifyV('CENTER')
+        -- text:SetJustifyV('CENTER')
         text:SetPoint('TOPLEFT', 1, -1)
         text:SetPoint('BOTTOMRIGHT', -1, 1)
         cell:SetHeight(ROW_HEIGHT)
